@@ -39,4 +39,4 @@ out/
 # docker volume
 mysql_data
 
-*.yml
+application.yml
