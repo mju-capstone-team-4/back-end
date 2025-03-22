@@ -22,9 +22,7 @@ public class StorageService {
 
     // 단일 파일 업로드
     public String uploadFile(MultipartFile multipartFile, Long memberId) throws IOException {
-        if (multipartFile == null || multipartFile.isEmpty()) {
-            return null;
-        }
+
         // 메타 데이터 생성
         System.out.println(multipartFile.getOriginalFilename());
         String filename = storageManager.generateDiseaseImageFileName(multipartFile.getOriginalFilename(), memberId);
