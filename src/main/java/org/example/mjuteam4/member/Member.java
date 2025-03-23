@@ -22,6 +22,13 @@ public class Member {
 
     private String profileUrl;
 
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.ROLE_USER;
+
+    public enum Role{
+        ROLE_USER, ROLE_ADMIN
+    }
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Plant> plantList = new ArrayList<>();
 
