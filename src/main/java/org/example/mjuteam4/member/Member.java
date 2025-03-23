@@ -22,6 +22,8 @@ public class Member {
 
     private String profileUrl;
 
+    private String refreshToken;
+
     @Enumerated(EnumType.STRING)
     private Role role = Role.ROLE_USER;
 
@@ -36,5 +38,9 @@ public class Member {
         this.email = email;
         this.username = username;
         this.profileUrl = profileUrl;
+    }
+
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 }
