@@ -1,6 +1,7 @@
 package org.example.mjuteam4.member;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.mjuteam4.plant.Plant;
@@ -42,5 +43,15 @@ public class Member {
 
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
+    }
+
+    @Builder
+    public Member(String email, String username, String profileUrl, String refreshToken, Role role, List<Plant> plantList) {
+        this.email = email;
+        this.username = username;
+        this.profileUrl = profileUrl;
+        this.refreshToken = refreshToken;
+        this.role = role;
+        this.plantList = plantList;
     }
 }
