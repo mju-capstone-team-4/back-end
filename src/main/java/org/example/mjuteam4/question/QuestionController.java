@@ -10,9 +10,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.stream.Stream;
-
 @RestController
 @RequestMapping("/api/question")
 @RequiredArgsConstructor
@@ -33,18 +30,21 @@ public class QuestionController {
     @GetMapping("/all")
     public ResponseEntity<Page<QuestionResponse>> questionList(
             @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size){
+            @RequestParam(value = "size", defaultValue = "10") int size)
+    {
         Pageable pageable = PageRequest.of(page, size);
         Page<QuestionResponse> response = questionService.questionList(pageable);
         return ResponseEntity.ok().body(response);
     }
 
-    /*
     @GetMapping("/{question_id}")
-    public ResponseEntity<QuestionResponse> questionDetail() {
-        questionService.questionDetail();;
+    public ResponseEntity<QuestionResponse> questionDetail(@PathVariable(value = "question_id") Long questionId) {
+        Question question = questionService.questionDetail(questionId);
+        QuestionResponse questionResponse = QuestionResponse.createQuestionResponse(question);
+        return ResponseEntity.ok().body(questionResponse);
     }
 
+    /*
     @PutMapping("/{question_id}")
     public ResponseEntity<QuestionResponse> questionModify() {
         questionService.modifyQuestion();

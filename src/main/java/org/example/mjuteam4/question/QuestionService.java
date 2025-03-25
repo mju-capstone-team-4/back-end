@@ -7,6 +7,7 @@ import org.example.mjuteam4.member.entity.Member;
 import org.example.mjuteam4.question.dto.request.QuestionRequest;
 import org.example.mjuteam4.question.dto.response.QuestionResponse;
 import org.example.mjuteam4.question.entity.Question;
+import org.example.mjuteam4.question.exception.QuestionNotFound;
 import org.example.mjuteam4.questionImage.QuestionImageService;
 import org.example.mjuteam4.questionImage.entity.QuestionImage;
 import org.springframework.data.domain.Page;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -38,8 +40,8 @@ public class QuestionService {
         return questions.map(QuestionResponse::createQuestionResponse);
     }
 
-    public void questionDetail() {
-
+    public Question questionDetail(Long questionId) {
+        return questionRepository.findById(questionId).orElseThrow(QuestionNotFound::new);
     }
 
     public void modifyQuestion() {
