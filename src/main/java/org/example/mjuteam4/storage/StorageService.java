@@ -21,11 +21,11 @@ public class StorageService {
     private final StorageManager storageManager;
 
     // 단일 파일 업로드
-    public String uploadFile(MultipartFile multipartFile, Long memberId) {
+    public String uploadFile(MultipartFile multipartFile, String filePath, Long memberId) {
 
         // 메타 데이터 생성
         System.out.println(multipartFile.getOriginalFilename());
-        String filename = storageManager.generateDiseaseImageFileName(multipartFile.getOriginalFilename(), memberId);
+        String filename = storageManager.generateImageFileName(multipartFile.getOriginalFilename(),filePath,memberId);
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(multipartFile.getSize());
         objectMetadata.setContentType(multipartFile.getContentType());

@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class QuestionImageService {
     private final StorageService storageService;
     public QuestionImage createQuestionImage(MultipartFile multipartFile){
-        String s3ImageUrl = storageService.uploadFile(multipartFile, 2L);
+        String s3ImageUrl = storageService.uploadFile(multipartFile, "questionImage",2L);
         QuestionImage questionImage = QuestionImage.createQuestionImage(s3ImageUrl);
         return questionImage;
     }
