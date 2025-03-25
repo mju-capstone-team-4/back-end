@@ -21,7 +21,7 @@ public class StorageService {
     private final StorageManager storageManager;
 
     // 단일 파일 업로드
-    public String uploadFile(MultipartFile multipartFile, Long memberId) throws IOException {
+    public String uploadFile(MultipartFile multipartFile, Long memberId) {
 
         // 메타 데이터 생성
         System.out.println(multipartFile.getOriginalFilename());
@@ -31,7 +31,12 @@ public class StorageService {
         objectMetadata.setContentType(multipartFile.getContentType());
 
         // s3에 이미지 전송 후
-        amazonS3.putObject(new PutObjectRequest(bucket, filename, multipartFile.getInputStream(), objectMetadata));
+        try {
+            amazonS3.putObject(new PutObjectRequest(bucket, filename, multipartFile.getInputStream(), objectMetadata));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
 
         // S3 이미지 URL 주소 리턴
         return getS3ImageUrl(filename);
