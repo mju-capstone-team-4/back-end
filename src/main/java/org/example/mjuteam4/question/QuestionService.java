@@ -5,11 +5,16 @@ import org.example.mjuteam4.member.MemberRepository;
 import org.example.mjuteam4.member.MemberService;
 import org.example.mjuteam4.member.entity.Member;
 import org.example.mjuteam4.question.dto.request.QuestionRequest;
+import org.example.mjuteam4.question.dto.response.QuestionResponse;
 import org.example.mjuteam4.question.entity.Question;
 import org.example.mjuteam4.questionImage.QuestionImageService;
 import org.example.mjuteam4.questionImage.entity.QuestionImage;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +31,11 @@ public class QuestionService {
         Member member = memberService.findById(memberId);
         member.addQuestion(question);
         return questionRepository.save(question);
+    }
+
+    public Page<QuestionResponse> questionList(Pageable pageable) {
+        Page<Question> questions = questionRepository.findAll(pageable);
+        return questions.map(QuestionResponse::createQuestionResponse);
     }
 
     public void questionDetail() {
