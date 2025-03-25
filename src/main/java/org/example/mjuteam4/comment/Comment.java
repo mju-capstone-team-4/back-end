@@ -3,7 +3,7 @@ package org.example.mjuteam4.comment;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.mjuteam4.Member;
+import org.example.mjuteam4.member.entity.Member;
 import org.example.mjuteam4.question.entity.Question;
 
 import java.time.LocalDateTime;

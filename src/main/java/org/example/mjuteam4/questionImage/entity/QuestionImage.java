@@ -1,4 +1,4 @@
-package org.example.mjuteam4.postImage.entity;
+package org.example.mjuteam4.questionImage.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -18,6 +18,17 @@ public class QuestionImage {
     private String imageUrl;
 
     @JoinColumn(name = "question_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     private Question question;
+
+    // 생성자
+    private QuestionImage(String imageUrl) {
+        this.uploadedAt = LocalDateTime.now();
+        this.imageUrl = imageUrl;
+    }
+
+    // 생성 메서드
+    public static QuestionImage createQuestionImage(String imageUrl) {
+        return new QuestionImage(imageUrl);
+    }
 }

@@ -3,10 +3,10 @@ package org.example.mjuteam4.question.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.mjuteam4.Member;
+import org.example.mjuteam4.member.entity.Member;
 import org.example.mjuteam4.comment.Comment;
-import org.example.mjuteam4.question.dto.request.QuestionCreateRequest;
-import org.example.mjuteam4.postImage.entity.QuestionImage;
+import org.example.mjuteam4.questionImage.entity.QuestionImage;
+import org.example.mjuteam4.question.dto.request.QuestionRequest;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -32,7 +32,25 @@ public class Question {
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<Comment>();
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<QuestionImage> questionImages = new ArrayList<QuestionImage>();
+    @OneToOne(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    private QuestionImage questionImage;
 
+    // 생성자
+    private Question(final QuestionRequest questionRequest) {
+        this.title = questionRequest.getTitle();
+        this.content = questionRequest.getContent();
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    // 생성 메서드
+    public static Question createQuestion(QuestionRequest questionRequest){
+        return new Question(questionRequest);
+    }
+
+    // 연관관계 편의 메서드
+    public void addImage(QuestionImage questionImage){
+        this.questionImage = questionImage;
+        questionImage.setQuestion(this);
+    }
 }
