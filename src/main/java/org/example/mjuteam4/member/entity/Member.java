@@ -1,4 +1,4 @@
-package org.example.mjuteam4;
+package org.example.mjuteam4.member.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -19,4 +19,10 @@ public class Member {
 
     @OneToMany(mappedBy = "member", orphanRemoval = true, cascade = CascadeType.ALL)
     public List<Question> questions = new ArrayList<Question>();
+
+    // 연관관계 편의 메서드
+    public void addQuestion(Question question) {
+        questions.add(question);
+        question.setMember(this);
+    }
 }
