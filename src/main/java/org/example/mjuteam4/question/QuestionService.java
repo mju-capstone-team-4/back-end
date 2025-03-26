@@ -64,8 +64,8 @@ public class QuestionService {
         return modifiedQuestion;
     }
 
-    public void deleteQuestion() {
-
+    public void deleteQuestion(Long questionId) {
+        questionRepository.deleteById(questionId);
     }
 
 

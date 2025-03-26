@@ -54,10 +54,12 @@ public class QuestionController {
         return ResponseEntity.ok().body(questionResponse);
     }
 
-    /*
     @DeleteMapping("/{question_id}")
-    public ResponseEntity<QuestionResponse> questionDelete() {
-        questionService.deleteQuestion();
+    public ResponseEntity<String> questionDelete(
+            @PathVariable(value = "question_id") Long questionId)
+    {
+        questionService.deleteQuestion(questionId);
+        return ResponseEntity.ok().body("Deleted Success");
     }
-     */
+
 }
