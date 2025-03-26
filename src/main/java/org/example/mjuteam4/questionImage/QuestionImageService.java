@@ -15,4 +15,8 @@ public class QuestionImageService {
         QuestionImage questionImage = QuestionImage.createQuestionImage(s3ImageUrl);
         return questionImage;
     }
+
+    public void deleteImageService(String originalImageUrl){
+        storageService.deleteFile(originalImageUrl);
+    }
 }

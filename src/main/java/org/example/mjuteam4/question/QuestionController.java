@@ -44,12 +44,17 @@ public class QuestionController {
         return ResponseEntity.ok().body(questionResponse);
     }
 
-    /*
     @PutMapping("/{question_id}")
-    public ResponseEntity<QuestionResponse> questionModify() {
-        questionService.modifyQuestion();
+    public ResponseEntity<QuestionResponse> questionModify(
+            @PathVariable(value = "question_id") Long questionId,
+            @ModelAttribute QuestionRequest questionRequest
+    ) {
+        Question question = questionService.modifyQuestion(questionId, questionRequest);
+        QuestionResponse questionResponse = QuestionResponse.createQuestionResponse(question);
+        return ResponseEntity.ok().body(questionResponse);
     }
 
+    /*
     @DeleteMapping("/{question_id}")
     public ResponseEntity<QuestionResponse> questionDelete() {
         questionService.deleteQuestion();

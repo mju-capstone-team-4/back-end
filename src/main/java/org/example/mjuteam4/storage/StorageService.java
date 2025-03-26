@@ -42,6 +42,12 @@ public class StorageService {
         return getS3ImageUrl(filename);
     }
 
+    // 단일 파일 삭제
+    public void deleteFile(String oldImageUrl) {
+        String objectKey = storageManager.extractKeyFromUrl(oldImageUrl);
+        amazonS3.deleteObject(bucket,objectKey);
+    }
+
     // S3에 저장된 이미지 주소 가져오기
     public String getS3ImageUrl(String filename) {
         return amazonS3.getUrl(bucket, filename).toString();

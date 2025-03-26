@@ -3,10 +3,12 @@ package org.example.mjuteam4.question.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.mjuteam4.member.entity.Member;
 import org.example.mjuteam4.comment.Comment;
 import org.example.mjuteam4.questionImage.entity.QuestionImage;
 import org.example.mjuteam4.question.dto.request.QuestionRequest;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -15,6 +17,7 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @Data
+@Slf4j
 public class Question {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,8 +51,24 @@ public class Question {
         return new Question(questionRequest);
     }
 
+    // 수정 메서드
+    public Question modifyQuestion(QuestionRequest questionRequest) {
+        String title = questionRequest.getTitle();
+        String content = questionRequest.getContent();
+
+        if(StringUtils.hasText(title)){
+            this.title = questionRequest.getTitle();
+        }
+        if(StringUtils.hasText(content)) {
+            this.content = questionRequest.getContent();
+        }
+
+        this.updatedAt = LocalDateTime.now();
+        return this;
+    }
+
     // 연관관계 편의 메서드
-    public void addImage(QuestionImage questionImage){
+    public void setQuestionImage(QuestionImage questionImage){
         this.questionImage = questionImage;
         questionImage.setQuestion(this);
     }
