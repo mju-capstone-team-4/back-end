@@ -5,6 +5,7 @@ import org.example.mjuteam4.comment.CommentService;
 import org.example.mjuteam4.comment.entity.Comment;
 import org.example.mjuteam4.commentLike.entity.CommentLike;
 import org.example.mjuteam4.commentLike.exception.AlreadyLikedException;
+import org.example.mjuteam4.commentLike.exception.NotLikedException;
 import org.example.mjuteam4.member.MemberService;
 import org.example.mjuteam4.member.entity.Member;
 import org.springframework.stereotype.Service;
@@ -40,7 +41,7 @@ public class CommentLikeService {
         Comment comment = commentService.findByCommentId(commentId);
 
         if(!commentLikeRepository.existsByMemberAndComment(member, comment)) {
-            throw new RuntimeException("좋아요 하지 않은 상태에서 좋아요를 취소할 수는 없음");
+            throw new NotLikedException();
         }
 
         CommentLike commentLike = commentLikeRepository.findByMemberAndComment(member, comment);
