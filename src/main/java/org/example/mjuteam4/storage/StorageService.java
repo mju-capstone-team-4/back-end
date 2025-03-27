@@ -21,20 +21,31 @@ public class StorageService {
     private final StorageManager storageManager;
 
     // 단일 파일 업로드
-    public String uploadFile(MultipartFile multipartFile, Long memberId) throws IOException {
+    public String uploadFile(MultipartFile multipartFile, String filePath, Long memberId) {
 
         // 메타 데이터 생성
         System.out.println(multipartFile.getOriginalFilename());
-        String filename = storageManager.generateDiseaseImageFileName(multipartFile.getOriginalFilename(), memberId);
+        String filename = storageManager.generateImageFileName(multipartFile.getOriginalFilename(),filePath,memberId);
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(multipartFile.getSize());
         objectMetadata.setContentType(multipartFile.getContentType());
 
         // s3에 이미지 전송 후
-        amazonS3.putObject(new PutObjectRequest(bucket, filename, multipartFile.getInputStream(), objectMetadata));
+        try {
+            amazonS3.putObject(new PutObjectRequest(bucket, filename, multipartFile.getInputStream(), objectMetadata));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
 
         // S3 이미지 URL 주소 리턴
         return getS3ImageUrl(filename);
+    }
+
+    // 단일 파일 삭제
+    public void deleteFile(String oldImageUrl) {
+        String objectKey = storageManager.extractKeyFromUrl(oldImageUrl);
+        amazonS3.deleteObject(bucket,objectKey);
     }
 
     // S3에 저장된 이미지 주소 가져오기

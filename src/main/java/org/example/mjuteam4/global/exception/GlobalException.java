@@ -8,14 +8,13 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalException extends RuntimeException {
 
     private ExceptionCode exceptionCode;
+    public GlobalException(String message, ExceptionCode errorCode) {
+        super(message);
+        this.exceptionCode = errorCode;
+    }
 
-
-    @ExceptionHandler(GlobalException.class)
-    public ResponseEntity<ExceptionResponse> handleBusinessException(GlobalException ex) {
-        ExceptionCode exceptionCode = ex.getExceptionCode(); // 예외에서 ErrorCode 추출
-        ExceptionResponse exceptionResponse = ExceptionResponse.from(exceptionCode); // ErrorResponse 생성
-        return ResponseEntity
-                .status(exceptionCode.getStatus()) // HTTP 상태 코드 설정
-                .body(exceptionResponse); // ErrorResponse 반환
+    public GlobalException(ExceptionCode errorCode) {
+        super(errorCode.getMessage());
+        this.exceptionCode = errorCode;
     }
 }
