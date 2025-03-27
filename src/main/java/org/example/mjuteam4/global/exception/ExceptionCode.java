@@ -11,6 +11,10 @@ public enum ExceptionCode {
 
     //question
     QUESTION_NOT_FOUND(404, "QUESTION_NOT_FOUND","질문을 찾을 수 없습니다"),
+
+    //comment
+    COMMENT_NOT_FOUND(404,"COMMENT_NOT_FOUND","댓글을 찾을 수 없습니다"),
+    COMMENT_UNAUTHORIZED_EXCEPTION(403, "COMMENT_UNAUTHORIZED_EXCEPTION", "댓글을 수정할 수 있는 권한이 없습니다.")
     ;
 
 

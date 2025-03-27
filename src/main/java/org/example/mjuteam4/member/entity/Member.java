@@ -3,6 +3,7 @@ package org.example.mjuteam4.member.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.example.mjuteam4.comment.entity.Comment;
 import org.example.mjuteam4.question.entity.Question;
 
 import java.util.ArrayList;
@@ -19,6 +20,9 @@ public class Member {
 
     @OneToMany(mappedBy = "member", orphanRemoval = true, cascade = CascadeType.ALL)
     public List<Question> questions = new ArrayList<Question>();
+
+    @OneToMany(mappedBy = "member", orphanRemoval = true, cascade = CascadeType.ALL)
+    public List<Comment> comments = new ArrayList<>();
 
     // 연관관계 편의 메서드
     public void addQuestion(Question question) {
