@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 public class MemberService {
     private final MemberRepository memberRepository;
 
-    public Member findById(Long memberId) {
+    public Member findByMemberId(Long memberId) {
         // 질문 게시판 작성한 임시 코드 -> 예외 처리 필요
         return memberRepository.findById(memberId).get();
     }

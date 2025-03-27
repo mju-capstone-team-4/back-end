@@ -21,4 +21,5 @@ public class CommentResponse {
     public static CommentResponse createCommentResponse(final Comment comment) {
         return new CommentResponse(comment);
     }
+
 }
