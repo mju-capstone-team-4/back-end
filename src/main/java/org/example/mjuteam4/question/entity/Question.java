@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.mjuteam4.member.entity.Member;
-import org.example.mjuteam4.comment.Comment;
+import org.example.mjuteam4.comment.entity.Comment;
 import org.example.mjuteam4.questionImage.entity.QuestionImage;
 import org.example.mjuteam4.question.dto.request.QuestionRequest;
 import org.springframework.util.StringUtils;

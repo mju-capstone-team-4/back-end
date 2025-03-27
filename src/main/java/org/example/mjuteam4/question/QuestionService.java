@@ -68,6 +68,10 @@ public class QuestionService {
         questionRepository.deleteById(questionId);
     }
 
+    public Question findQuestionById(Long questionId) {
+        return questionRepository.findById(questionId).orElseThrow(QuestionNotFound::new);
+    }
+
 
 
 }
