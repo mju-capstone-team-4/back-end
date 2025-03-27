@@ -31,7 +31,7 @@ public class QuestionService {
         Question question = Question.createQuestion(questionRequest);
         QuestionImage questionImage = questionImageService.createQuestionImage(questionRequest.getImage());
         question.setQuestionImage(questionImage);
-        Member member = memberService.findById(memberId);
+        Member member = memberService.findByMemberId(memberId);
         member.addQuestion(question);
         return questionRepository.save(question);
     }
