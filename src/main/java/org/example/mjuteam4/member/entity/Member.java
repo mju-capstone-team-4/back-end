@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.example.mjuteam4.comment.entity.Comment;
 import org.example.mjuteam4.commentLike.entity.CommentLike;
 import org.example.mjuteam4.question.entity.Question;
+import org.example.mjuteam4.tradePost.entity.TradePost;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,9 @@ public class Member {
     @OneToMany(mappedBy = "member", orphanRemoval = true, cascade = CascadeType.ALL)
     public List<CommentLike> commentLikes = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member", orphanRemoval = true, cascade = CascadeType.ALL)
+    public List<TradePost> tradePosts = new ArrayList<>();
+
     // 연관관계 편의 메서드
     public void addQuestion(Question question) {
         questions.add(question);
@@ -37,5 +41,10 @@ public class Member {
     public void addCommentLike(CommentLike commentLike){
         commentLikes.add(commentLike);
         commentLike.setMember(this);
+    }
+
+    public void addTradePost(TradePost tradePost){
+        tradePosts.add(tradePost);
+        tradePost.setMember(this);
     }
 }
