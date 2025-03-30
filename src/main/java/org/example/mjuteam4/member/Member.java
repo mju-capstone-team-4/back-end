@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.example.mjuteam4.plant.Plant;
+import org.example.mjuteam4.myPlant.MyPlant;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +33,7 @@ public class Member {
     }
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Plant> plantList = new ArrayList<>();
+    private List<MyPlant> myPlantList = new ArrayList<>();
 
     public Member(String email, String username, String profileUrl) {
         this.email = email;
@@ -46,12 +46,12 @@ public class Member {
     }
 
     @Builder
-    public Member(String email, String username, String profileUrl, String refreshToken, Role role, List<Plant> plantList) {
+    public Member(String email, String username, String profileUrl, String refreshToken, Role role, List<MyPlant> myPlantList) {
         this.email = email;
         this.username = username;
         this.profileUrl = profileUrl;
         this.refreshToken = refreshToken;
         this.role = role;
-        this.plantList = plantList;
+        this.myPlantList = myPlantList;
     }
 }
