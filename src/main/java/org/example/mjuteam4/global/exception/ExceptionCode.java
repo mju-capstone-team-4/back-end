@@ -8,7 +8,8 @@ import lombok.Getter;
 public enum ExceptionCode {
 
     // member
-    MEMBER_NOT_FOUND(404, "MEMBER_404", "사용자를 찾을 수 없음"),
+    MEMBER_NOT_FOUND(404, "MEMBER_001", "사용자를 찾을 수 없음"),
+    MEMBER_ALREADY_EXISTS(400, "MEMBER_002", "이미 가입된 유저입니다"),
 
     // auth
     TOKEN_INVALID(401, "A001", "검증된 토큰이 아닙니다"),

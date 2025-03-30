@@ -2,8 +2,11 @@ package org.example.mjuteam4.member.security;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.example.mjuteam4.global.exception.GlobalException;
 import org.example.mjuteam4.member.Member;
 import org.example.mjuteam4.member.MemberRepository;
+import org.example.mjuteam4.member.exception.MemberAlreadyExistsException;
+import org.example.mjuteam4.member.exception.MemberNotFoundException;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -32,15 +35,20 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
         OAuth2MemberInfo oAuth2UserInfo = OAuth2MemberInfo.of(registrationId, userAttribute);
 
         AtomicBoolean isFirstLogin = new AtomicBoolean(false);
+        boolean alreadySign = memberRepository.findByEmail(oAuth2UserInfo.getEmail()).isPresent();
 
-        // 이메일 중복 체크 및 기존 사용자 처리
-        Member member = memberRepository.findByEmail(oAuth2UserInfo.getEmail())
-                .orElseGet(() -> {
-                    isFirstLogin.set(true); // 처음 로그인 플래그 설정
-                    return memberRepository.save(oAuth2UserInfo.toMember());
-                });
+        if(alreadySign){
+            throw new MemberAlreadyExistsException();
+        } else {
+            Member member = Member.builder()
+                    .email(oAuth2UserInfo.getEmail())
+                    .username(oAuth2UserInfo.getName())
+                    .role(Member.Role.ROLE_USER)
+                    .build();
+            memberRepository.save(member);
+            return new PrincipalDetails(member, userAttribute, userNameAttributeName, isFirstLogin.get());
+        }
 
-        return new PrincipalDetails(member, userAttribute, userNameAttributeName, isFirstLogin.get());
     }
 }
 
