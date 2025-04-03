@@ -7,6 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ExceptionCode {
 
+
     MEMBER_NOT_FOUND(404, "MEMBER_404", "사용자를 찾을 수 없음"),
 
     //question
@@ -23,6 +24,15 @@ public enum ExceptionCode {
 
     //tradePost
     TRADE_POST_NOT_FOUND(404,"TRADE_POST_NOT_FOUND","해당 거래 게시글을 찾을 수 없습니다"),
+    // member
+    MEMBER_NOT_FOUND(404, "MEMBER_001", "사용자를 찾을 수 없음"),
+    MEMBER_ALREADY_EXISTS(400, "MEMBER_002", "이미 가입된 유저입니다"),
+
+    // auth
+    TOKEN_INVALID(401, "A001", "검증된 토큰이 아닙니다"),
+    JWT_SIGNATURE_INVALID(401, "A002", "서명이 검증되지 않음"),
+    JwtAuthenticationException(401, "A003", "인증 관련 예외"),
+    ILLEGAL_REGISTRATION_ID(401, "A004", "잘못된 id"),
     ;
 
 
