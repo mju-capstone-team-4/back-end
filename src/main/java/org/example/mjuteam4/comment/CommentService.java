@@ -23,7 +23,7 @@ public class CommentService {
     private final MemberService memberService;
     public Comment commentCreate(Long memberId, Long questionId, CommentRequest commentRequest) {
         Question question = questionService.findQuestionById(questionId);
-        Member member = memberService.findById(memberId);
+        Member member = memberService.findByMemberId(memberId);
 
         Comment comment = Comment.createComment(commentRequest);
         comment.setQuestion(question);
@@ -65,5 +65,10 @@ public class CommentService {
         }
 
         return comment;
+    }
+
+    // 댓글 id로 댓글 조회하기
+    public Comment findByCommentId(Long commentId){
+        return commentRepository.findById(commentId).orElseThrow(CommentNotFound::new);
     }
 }

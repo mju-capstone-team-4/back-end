@@ -12,10 +12,11 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api")
 public class CommentController {
-    private final Long memberId = 9999L; // 임시용 memberId
+    private final Long memberId = 999L; // 임시용 memberId
     private final CommentService commentService;
-    @PostMapping("/api/question/{question_id}/comment")
+    @PostMapping("/question/{question_id}/comment")
     public ResponseEntity<CommentResponse> createComment(
             @PathVariable(value = "question_id") Long questionId,
             @RequestBody CommentRequest commentRequest
@@ -25,7 +26,7 @@ public class CommentController {
         return ResponseEntity.ok().body(commentResponse);
     }
 
-    @GetMapping("/api/question/{question_id}/comments")
+    @GetMapping("/question/{question_id}/comments")
     public Page<CommentResponse> getCommentList(
             @PathVariable(value = "question_id") Long questionId,
             @RequestParam(value = "page", defaultValue = "0") int page,
@@ -36,7 +37,7 @@ public class CommentController {
         return comments.map(CommentResponse::createCommentResponse);
     }
 
-    @PutMapping("/api/comment/{comment_id}")
+    @PutMapping("/comment/{comment_id}")
     public ResponseEntity<CommentResponse> modifyComment(
             @PathVariable(value = "comment_id") Long commentId,
             @RequestBody CommentRequest commentRequest)
@@ -46,7 +47,7 @@ public class CommentController {
         return ResponseEntity.ok().body(commentResponse);
     }
 
-    @DeleteMapping("/api/comment/{comment_id}")
+    @DeleteMapping("/comment/{comment_id}")
     public ResponseEntity<String> deleteComment(@PathVariable(value = "comment_id") Long commentId){
         commentService.deleteComment(memberId, commentId);
         return ResponseEntity.ok().body("comment deleted");
