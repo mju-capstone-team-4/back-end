@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api")
 public class CommentController {
-    private final Long memberId = 9999L; // 임시용 memberId
+    private final Long memberId = 999L; // 임시용 memberId
     private final CommentService commentService;
     @PostMapping("/question/{question_id}/comment")
     public ResponseEntity<CommentResponse> createComment(

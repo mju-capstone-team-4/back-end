@@ -18,7 +18,11 @@ public enum ExceptionCode {
 
     //commentLike
     ALREADY_LIKED_EXCEPTION(409,"ALREADY_LIKED_EXCEPTION", "이미 좋아요를 누른 상태에서 다시 좋아요르 누를 수는 없습니다."),
-    NOT_LIKED_YET_EXCEPTION(400, "NOT_LIKE_YEY_EXCEPTION","좋아요를 누르지 않은 상태에서 좋아요를 취소할 수는 없습니다.");
+    NOT_LIKED_YET_EXCEPTION(400, "NOT_LIKE_YET_EXCEPTION","좋아요를 누르지 않은 상태에서 좋아요를 취소할 수는 없습니다."),
+
+
+    //tradePost
+    TRADE_POST_NOT_FOUND(404,"TRADE_POST_NOT_FOUND","해당 거래 게시글을 찾을 수 없습니다"),
     ;
 
 
