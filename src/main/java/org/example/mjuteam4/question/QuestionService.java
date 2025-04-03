@@ -31,7 +31,7 @@ public class QuestionService {
         Question question = Question.createQuestion(questionRequest);
         QuestionImage questionImage = questionImageService.createQuestionImage(questionRequest.getImage());
         question.setQuestionImage(questionImage);
-        Member member = memberService.findById(memberId);
+        Member member = memberService.findByMemberId(memberId);
         member.addQuestion(question);
         return questionRepository.save(question);
     }
@@ -66,6 +66,10 @@ public class QuestionService {
 
     public void deleteQuestion(Long questionId) {
         questionRepository.deleteById(questionId);
+    }
+
+    public Question findQuestionById(Long questionId) {
+        return questionRepository.findById(questionId).orElseThrow(QuestionNotFound::new);
     }
 
 
