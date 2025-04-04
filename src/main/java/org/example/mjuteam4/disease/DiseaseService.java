@@ -20,7 +20,7 @@ public class DiseaseService {
     // 단일 파일 업로드 한 후 얻은 이미지 URL을 AI 서버에 전송하여 예측값을 가져온다.
     public PredictResponse predict(MultipartFile multipartFile, Long memberId) throws IOException {
         // S3에 이미지 전송
-        String s3ImageUrl = storageService.uploadFile(multipartFile, memberId);
+        String s3ImageUrl = storageService.uploadFile(multipartFile, "disease", memberId);
 
         // AI 서버로 전송할 요청 생성
         HashMap<String, String> requestBody = new HashMap<>();
