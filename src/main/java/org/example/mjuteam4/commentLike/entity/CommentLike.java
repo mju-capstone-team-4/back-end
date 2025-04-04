@@ -7,7 +7,7 @@ import jakarta.persistence.ManyToOne;
 import lombok.*;
 import org.example.mjuteam4.comment.entity.Comment;
 import org.example.mjuteam4.global.domain.LikeBaseEntity;
-import org.example.mjuteam4.member.entity.Member;
+import org.example.mjuteam4.member.Member;
 
 import java.time.LocalDateTime;
 

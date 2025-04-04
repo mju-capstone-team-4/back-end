@@ -2,7 +2,7 @@ package org.example.mjuteam4.global.domain;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.example.mjuteam4.member.entity.Member;
+import org.example.mjuteam4.member.Member;
 
 import java.time.LocalDateTime;
 

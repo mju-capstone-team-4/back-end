@@ -1,8 +1,8 @@
 package org.example.mjuteam4.question;
 
 import lombok.RequiredArgsConstructor;
+import org.example.mjuteam4.member.Member;
 import org.example.mjuteam4.member.MemberService;
-import org.example.mjuteam4.member.entity.Member;
 import org.example.mjuteam4.question.dto.request.QuestionRequest;
 import org.example.mjuteam4.question.dto.response.QuestionResponse;
 import org.example.mjuteam4.question.entity.Question;

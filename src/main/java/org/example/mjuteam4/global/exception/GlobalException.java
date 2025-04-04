@@ -8,11 +8,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalException extends RuntimeException {
 
     private ExceptionCode exceptionCode;
-    public GlobalException(String message, ExceptionCode errorCode) {
-        super(message);
-        this.exceptionCode = errorCode;
-    }
-
 
     public GlobalException(String message, ExceptionCode errorCode) {
         super(message);

@@ -1,7 +1,6 @@
 package org.example.mjuteam4.member;
 
 import lombok.RequiredArgsConstructor;
-import org.example.mjuteam4.member.entity.Member;
 import org.springframework.stereotype.Service;
 
 @Service

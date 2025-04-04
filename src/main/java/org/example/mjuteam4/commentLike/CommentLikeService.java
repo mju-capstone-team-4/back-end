@@ -6,8 +6,8 @@ import org.example.mjuteam4.comment.entity.Comment;
 import org.example.mjuteam4.commentLike.entity.CommentLike;
 import org.example.mjuteam4.commentLike.exception.AlreadyLikedException;
 import org.example.mjuteam4.commentLike.exception.NotLikedException;
+import org.example.mjuteam4.member.Member;
 import org.example.mjuteam4.member.MemberService;
-import org.example.mjuteam4.member.entity.Member;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

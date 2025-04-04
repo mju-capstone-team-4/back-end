@@ -1,11 +1,8 @@
 package org.example.mjuteam4.tradePost;
 
 import lombok.RequiredArgsConstructor;
+import org.example.mjuteam4.member.Member;
 import org.example.mjuteam4.member.MemberService;
-import org.example.mjuteam4.member.entity.Member;
-import org.example.mjuteam4.question.entity.Question;
-import org.example.mjuteam4.question.exception.QuestionNotFound;
-import org.example.mjuteam4.questionImage.entity.QuestionImage;
 import org.example.mjuteam4.storage.StorageService;
 import org.example.mjuteam4.tradePost.dto.request.TradePostRequest;
 import org.example.mjuteam4.tradePost.entity.TradePost;
@@ -17,8 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
