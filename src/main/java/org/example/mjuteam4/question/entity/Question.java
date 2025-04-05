@@ -6,8 +6,9 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.mjuteam4.comment.entity.Comment;
 import org.example.mjuteam4.member.Member;
+import org.example.mjuteam4.question.dto.request.QuestionUpdateRequest;
 import org.example.mjuteam4.questionImage.entity.QuestionImage;
-import org.example.mjuteam4.question.dto.request.QuestionRequest;
+import org.example.mjuteam4.question.dto.request.QuestionCreateRequest;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
@@ -39,28 +40,28 @@ public class Question {
     private QuestionImage questionImage;
 
     // 생성자
-    private Question(final QuestionRequest questionRequest) {
-        this.title = questionRequest.getTitle();
-        this.content = questionRequest.getContent();
+    private Question(final QuestionCreateRequest questionCreateRequest) {
+        this.title = questionCreateRequest.getTitle();
+        this.content = questionCreateRequest.getContent();
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
 
     // 생성 메서드
-    public static Question createQuestion(QuestionRequest questionRequest){
-        return new Question(questionRequest);
+    public static Question createQuestion(QuestionCreateRequest questionCreateRequest){
+        return new Question(questionCreateRequest);
     }
 
     // 수정 메서드
-    public Question modifyQuestion(QuestionRequest questionRequest) {
-        String title = questionRequest.getTitle();
-        String content = questionRequest.getContent();
+    public Question modifyQuestion(QuestionUpdateRequest questionUpdateRequest) {
+        String title = questionUpdateRequest.getTitle();
+        String content = questionUpdateRequest.getContent();
 
         if(StringUtils.hasText(title)){
-            this.title = questionRequest.getTitle();
+            this.title = questionUpdateRequest.getTitle();
         }
         if(StringUtils.hasText(content)) {
-            this.content = questionRequest.getContent();
+            this.content = questionUpdateRequest.getContent();
         }
 
         this.updatedAt = LocalDateTime.now();
@@ -70,6 +71,11 @@ public class Question {
     // 연관관계 편의 메서드
     public void setQuestionImage(QuestionImage questionImage){
         this.questionImage = questionImage;
-        questionImage.setQuestion(this);
+
+        // 고아 객체 유도 시 방어를 위해 if문 추가
+        if (questionImage != null) {
+            questionImage.setQuestion(this); // 연관관계 설정
+        }
+
     }
 }

@@ -1,7 +1,8 @@
 package org.example.mjuteam4.question;
 
 import lombok.RequiredArgsConstructor;
-import org.example.mjuteam4.question.dto.request.QuestionRequest;
+import org.example.mjuteam4.question.dto.request.QuestionCreateRequest;
+import org.example.mjuteam4.question.dto.request.QuestionUpdateRequest;
 import org.example.mjuteam4.question.dto.response.QuestionResponse;
 import org.example.mjuteam4.question.entity.Question;
 import org.springframework.data.domain.Page;
@@ -18,11 +19,11 @@ public class QuestionController {
     private final QuestionService questionService;
 
     @PostMapping("/create")
-    public ResponseEntity<QuestionResponse> questionCreate(@ModelAttribute QuestionRequest questionRequest) {
+    public ResponseEntity<QuestionResponse> questionCreate(@ModelAttribute QuestionCreateRequest questionCreateRequest) {
         // 임시 memberId, 로컬에서 테스트 진행할 때, 직접 DB에 memberId가 999인 member를 생성
         // 후에 회원 관련 기능 개발 후 수정
         Long memberId = 999L;
-        Question question = questionService.createQuestion(memberId, questionRequest);
+        Question question = questionService.createQuestion(memberId, questionCreateRequest);
         QuestionResponse questionResponse = QuestionResponse.createQuestionResponse(question);
         return ResponseEntity.ok().body(questionResponse);
     }
@@ -47,9 +48,9 @@ public class QuestionController {
     @PutMapping("/{question_id}")
     public ResponseEntity<QuestionResponse> questionModify(
             @PathVariable(value = "question_id") Long questionId,
-            @ModelAttribute QuestionRequest questionRequest
+            @ModelAttribute QuestionUpdateRequest questionUpdateRequest
     ) {
-        Question question = questionService.modifyQuestion(questionId, questionRequest);
+        Question question = questionService.modifyQuestion(questionId, questionUpdateRequest);
         QuestionResponse questionResponse = QuestionResponse.createQuestionResponse(question);
         return ResponseEntity.ok().body(questionResponse);
     }

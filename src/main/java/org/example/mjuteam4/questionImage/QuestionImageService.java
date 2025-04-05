@@ -16,7 +16,8 @@ public class QuestionImageService {
         return questionImage;
     }
 
-    public void deleteImageService(String originalImageUrl){
+    public void deleteS3Image(String originalImageUrl){
+
         storageService.deleteFile(originalImageUrl);
     }
 }
