@@ -50,4 +50,20 @@ public class MypageService {
 
         myPlantRepository.save(myplant);
     }
+
+    public List<MyPlantResponse> getMyPlant() {
+
+        Member loginMember = jwtUtil.getLoginMember();
+
+        List<MyPlant> myPlantList = loginMember.getMyPlantList();
+
+        List<MyPlantResponse> myPlantResponseList = new ArrayList<>();
+
+        for (MyPlant myPlant : myPlantList) {
+            MyPlantResponse myPlantResponse = MyPlantResponse.from(myPlant);
+            myPlantResponseList.add(myPlantResponse);
+        }
+
+        return myPlantResponseList;
+    }
 }
