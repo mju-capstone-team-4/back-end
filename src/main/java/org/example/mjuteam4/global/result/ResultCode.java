@@ -7,6 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ResultCode {
 
+    REGISTER_MYPLANT_SUCCESS(200, "MP001", "내 식물 등록 성공"),
 
     ;
 

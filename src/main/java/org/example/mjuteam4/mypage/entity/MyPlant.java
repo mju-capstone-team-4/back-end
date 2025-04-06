@@ -1,6 +1,7 @@
 package org.example.mjuteam4.mypage.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -16,4 +17,13 @@ public class MyPlant {
 
     private String description;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Member member;
+
+    @Builder
+    public MyPlant(String name, String description, Member member) {
+        this.name = name;
+        this.description = description;
+        this.member = member;
+    }
 }

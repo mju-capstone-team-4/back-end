@@ -1,8 +1,10 @@
 package org.example.mjuteam4.mypage;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.mjuteam4.global.uitl.JwtUtil;
 import org.example.mjuteam4.mypage.dto.MyPageResponse;
+import org.example.mjuteam4.mypage.dto.RegisterMyPlantRequest;
 import org.example.mjuteam4.mypage.entity.MyPlant;
 import org.example.mjuteam4.mypage.repository.MyPlantRepository;
 import org.example.mjuteam4.mypage.dto.MyPlantResponse;
@@ -34,5 +36,18 @@ public class MypageService {
         }
 
         return MyPageResponse.from(loginMember,myPlantResponseList);
+    }
+
+    @Transactional
+    public void registerMyPlant(RegisterMyPlantRequest request) {
+        Member loginMember = jwtUtil.getLoginMember();
+
+        MyPlant myplant = MyPlant.builder()
+                .member(loginMember)
+                .name(request.getName())
+                .description(request.getDescription())
+                .build();
+
+        myPlantRepository.save(myplant);
     }
 }

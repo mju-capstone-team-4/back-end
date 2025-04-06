@@ -1,13 +1,12 @@
 package org.example.mjuteam4.mypage;
 
 import lombok.RequiredArgsConstructor;
+import org.example.mjuteam4.global.result.ResultCode;
 import org.example.mjuteam4.global.result.ResultResponse;
 import org.example.mjuteam4.mypage.dto.MyPageResponse;
+import org.example.mjuteam4.mypage.dto.RegisterMyPlantRequest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,8 +23,8 @@ public class MyPageController {
 
     // 내 식물 등록
     @PostMapping("/plant")
-    public ResponseEntity<ResultResponse> registerMyPlant(){
-        mypageService.registerMyPlant();
-
+    public ResponseEntity<ResultResponse> registerMyPlant(@RequestBody RegisterMyPlantRequest registerMyPlantRequest){
+        mypageService.registerMyPlant(registerMyPlantRequest);
+        return ResponseEntity.ok().body(ResultResponse.of(ResultCode.REGISTER_MYPLANT_SUCCESS));
     }
 }
