@@ -1,7 +1,7 @@
-package org.example.mjuteam4.member;
+package org.example.mjuteam4.mypage.repository;
 
+import org.example.mjuteam4.mypage.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;
 

@@ -1,4 +1,4 @@
-package org.example.mjuteam4.myPlant;
+package org.example.mjuteam4.mypage.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

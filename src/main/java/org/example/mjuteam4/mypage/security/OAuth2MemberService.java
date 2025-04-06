@@ -1,12 +1,10 @@
-package org.example.mjuteam4.member.security;
+package org.example.mjuteam4.mypage.security;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.example.mjuteam4.global.exception.GlobalException;
-import org.example.mjuteam4.member.Member;
-import org.example.mjuteam4.member.MemberRepository;
-import org.example.mjuteam4.member.exception.MemberAlreadyExistsException;
-import org.example.mjuteam4.member.exception.MemberNotFoundException;
+import org.example.mjuteam4.mypage.entity.Member;
+import org.example.mjuteam4.mypage.repository.MemberRepository;
+import org.example.mjuteam4.mypage.exception.MemberAlreadyExistsException;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;

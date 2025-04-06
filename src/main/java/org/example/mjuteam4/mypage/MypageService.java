@@ -1,11 +1,13 @@
-package org.example.mjuteam4.member;
+package org.example.mjuteam4.mypage;
 
 import lombok.RequiredArgsConstructor;
 import org.example.mjuteam4.global.uitl.JwtUtil;
-import org.example.mjuteam4.member.dto.MyPageResponse;
-import org.example.mjuteam4.myPlant.MyPlant;
-import org.example.mjuteam4.myPlant.MyPlantRepository;
-import org.example.mjuteam4.myPlant.dto.MyPlantResponse;
+import org.example.mjuteam4.mypage.dto.MyPageResponse;
+import org.example.mjuteam4.mypage.entity.MyPlant;
+import org.example.mjuteam4.mypage.repository.MyPlantRepository;
+import org.example.mjuteam4.mypage.dto.MyPlantResponse;
+import org.example.mjuteam4.mypage.entity.Member;
+import org.example.mjuteam4.mypage.repository.MemberRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -13,7 +15,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class MemberService {
+public class MypageService {
 
     private final JwtUtil jwtUtil;
     private final MemberRepository memberRepository;
@@ -22,6 +24,7 @@ public class MemberService {
     public MyPageResponse getMyPage() {
 
         Member loginMember = jwtUtil.getLoginMember();
+
         List<MyPlant> myPlantList = loginMember.getMyPlantList();
         List<MyPlantResponse> myPlantResponseList = new ArrayList<>();
 

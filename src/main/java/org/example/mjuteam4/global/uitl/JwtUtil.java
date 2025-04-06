@@ -1,9 +1,9 @@
 package org.example.mjuteam4.global.uitl;
 
 import lombok.RequiredArgsConstructor;
-import org.example.mjuteam4.member.Member;
-import org.example.mjuteam4.member.MemberRepository;
-import org.example.mjuteam4.member.exception.MemberNotFoundException;
+import org.example.mjuteam4.mypage.entity.Member;
+import org.example.mjuteam4.mypage.repository.MemberRepository;
+import org.example.mjuteam4.mypage.exception.MemberNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;

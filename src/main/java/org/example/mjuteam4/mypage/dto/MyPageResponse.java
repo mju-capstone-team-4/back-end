@@ -1,11 +1,9 @@
-package org.example.mjuteam4.member.dto;
+package org.example.mjuteam4.mypage.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.example.mjuteam4.member.Member;
-import org.example.mjuteam4.myPlant.dto.MyPlantResponse;
+import org.example.mjuteam4.mypage.entity.Member;
 
 import java.util.List;
 

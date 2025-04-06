@@ -1,9 +1,9 @@
-package org.example.mjuteam4.member.security;
+package org.example.mjuteam4.mypage.security;
 
 import lombok.Builder;
 import lombok.Getter;
-import org.example.mjuteam4.member.Member;
-import org.example.mjuteam4.member.exception.IllegalRegistrationIdException;
+import org.example.mjuteam4.mypage.entity.Member;
+import org.example.mjuteam4.mypage.exception.IllegalRegistrationIdException;
 
 import java.util.Map;
 

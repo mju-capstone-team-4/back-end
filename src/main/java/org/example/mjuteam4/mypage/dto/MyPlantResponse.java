@@ -1,9 +1,8 @@
-package org.example.mjuteam4.myPlant.dto;
+package org.example.mjuteam4.mypage.dto;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.example.mjuteam4.myPlant.MyPlant;
+import org.example.mjuteam4.mypage.entity.MyPlant;
 
 @Builder
 @Getter
