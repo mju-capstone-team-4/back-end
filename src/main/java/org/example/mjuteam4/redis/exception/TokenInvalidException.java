@@ -6,6 +6,6 @@ import org.example.mjuteam4.global.exception.GlobalException;
 public class TokenInvalidException extends GlobalException {
 
     public TokenInvalidException() {
-        super(ExceptionCode.TOKEN_INVALID);
+        super(ExceptionCode.AUTH_TOKEN_INVALID);
     }
 }

@@ -12,10 +12,11 @@ public enum ExceptionCode {
     MEMBER_ALREADY_EXISTS(400, "MEMBER_002", "이미 가입된 유저입니다"),
 
     // auth
-    TOKEN_INVALID(401, "A001", "검증된 토큰이 아닙니다"),
-    JWT_SIGNATURE_INVALID(401, "A002", "서명이 검증되지 않음"),
-    JwtAuthenticationException(401, "A003", "인증 관련 예외"),
-    ILLEGAL_REGISTRATION_ID(401, "A004", "잘못된 id"),
+    AUTH_TOKEN_INVALID(401, "AUTH_TOKEN_INVALID", "유효하지 않은 토큰입니다."),
+    AUTH_JWT_SIGNATURE_INVALID(401, "AUTH_JWT_SIGNATURE_INVALID", "JWT 서명이 유효하지 않습니다."),
+    AUTH_JWT_AUTHENTICATION_FAILED(401, "AUTH_JWT_AUTHENTICATION_FAILED", "JWT 인증 실패"),
+    AUTH_ILLEGAL_REGISTRATION_ID(401, "AUTH_ILLEGAL_REGISTRATION_ID", "잘못된 Registration ID입니다."),
+
     ;
 
     private final int status;

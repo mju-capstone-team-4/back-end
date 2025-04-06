@@ -5,6 +5,6 @@ import org.example.mjuteam4.global.exception.GlobalException;
 
 public class JwtSignatureInvalidException extends GlobalException {
     public JwtSignatureInvalidException() {
-        super(ExceptionCode.JWT_SIGNATURE_INVALID);
+        super(ExceptionCode.AUTH_JWT_SIGNATURE_INVALID);
     }
 }
