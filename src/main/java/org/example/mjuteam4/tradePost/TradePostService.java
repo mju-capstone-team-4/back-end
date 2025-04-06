@@ -46,15 +46,16 @@ public class TradePostService {
         TradePost modifiedTradePost = tradePostRepository.findById(tradePostId).orElseThrow(TradePostNotFound::new).modifyTradePost(tradePostRequest);
         // 이미지 수정
         // 이미지 변경 요청이 있다면, 기존 s3이미지 삭제하고 새로운 이미지 업로드
-        MultipartFile requestedImage = tradePostRequest.getImage();
-        if(requestedImage != null && !requestedImage.isEmpty()){
+        if(tradePostRequest.getImage() != null){
 
             String originalImageUrl = modifiedTradePost.getTradePostImage().getImageUrl();
             tradePostImageService.deleteImageService(originalImageUrl);
+            modifiedTradePost.setTradePostImage(null);
+            tradePostRepository.flush();
 
-            TradePostImage tradePostImage = tradePostImageService.createTradePostImage(requestedImage);
-
-            modifiedTradePost.setTradePostImage(tradePostImage);
+            MultipartFile image = tradePostRequest.getImage();
+            TradePostImage tradePostImage = tradePostImageService.createTradePostImage(image);
+            modifiedTradePost.addTradePostImage(tradePostImage);
         }
 
         return modifiedTradePost;

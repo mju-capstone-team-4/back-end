@@ -1,9 +1,11 @@
 package org.example.mjuteam4.question;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.mjuteam4.member.Member;
 import org.example.mjuteam4.member.MemberService;
-import org.example.mjuteam4.question.dto.request.QuestionRequest;
+import org.example.mjuteam4.question.dto.request.QuestionCreateRequest;
+import org.example.mjuteam4.question.dto.request.QuestionUpdateRequest;
 import org.example.mjuteam4.question.dto.response.QuestionResponse;
 import org.example.mjuteam4.question.entity.Question;
 import org.example.mjuteam4.question.exception.QuestionNotFound;
@@ -19,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class QuestionService {
 
     private final MemberService memberService;
@@ -27,9 +30,9 @@ public class QuestionService {
 
     private final QuestionRepository questionRepository;
 
-    public Question createQuestion(Long memberId, QuestionRequest questionRequest) {
-        Question question = Question.createQuestion(questionRequest);
-        QuestionImage questionImage = questionImageService.createQuestionImage(questionRequest.getImage());
+    public Question createQuestion(Long memberId, QuestionCreateRequest questionCreateRequest) {
+        Question question = Question.createQuestion(questionCreateRequest);
+        QuestionImage questionImage = questionImageService.createQuestionImage(questionCreateRequest.getImage());
         question.setQuestionImage(questionImage);
         Member member = memberService.findByMemberId(memberId);
         member.addQuestion(question);
@@ -45,18 +48,21 @@ public class QuestionService {
         return questionRepository.findById(questionId).orElseThrow(QuestionNotFound::new);
     }
 
-    public Question modifyQuestion(Long questionId, QuestionRequest questionRequest) {
+    public Question modifyQuestion(Long questionId, QuestionUpdateRequest questionUpdateRequest) {
+
         // 수정 대상 질문 조회 후 제목, 내용 수정
-        Question modifiedQuestion = questionRepository.findById(questionId).orElseThrow(QuestionNotFound::new).modifyQuestion(questionRequest);
+        Question modifiedQuestion = questionRepository.findById(questionId).orElseThrow(QuestionNotFound::new).modifyQuestion(questionUpdateRequest);
 
         // 이미지 수정
         // 이미지 변경 요청이 있다면, 기존 s3이미지 삭제하고 새로운 이미지 업로드
-        if(!questionRequest.getImage().isEmpty()){
+        if(questionUpdateRequest.getImage() != null){
 
             String originalImageUrl = modifiedQuestion.getQuestionImage().getImageUrl();
-            questionImageService.deleteImageService(originalImageUrl);
+            questionImageService.deleteS3Image(originalImageUrl); //s3 이미지 삭제
+            modifiedQuestion.setQuestionImage(null); // 고아 객체 제거 유도
+            questionRepository.flush();
 
-            MultipartFile image = questionRequest.getImage();
+            MultipartFile image = questionUpdateRequest.getImage();
             QuestionImage questionImage = questionImageService.createQuestionImage(image);
 
             modifiedQuestion.setQuestionImage(questionImage);
