@@ -7,6 +7,7 @@ import org.example.mjuteam4.global.exception.GlobalException;
 import org.example.mjuteam4.global.uitl.JwtUtil;
 import org.example.mjuteam4.mypage.dto.MyPageResponse;
 import org.example.mjuteam4.mypage.dto.RegisterMyPlantRequest;
+import org.example.mjuteam4.mypage.dto.UpdateMyInfoRequest;
 import org.example.mjuteam4.mypage.entity.MyPlant;
 import org.example.mjuteam4.mypage.repository.MyPlantRepository;
 import org.example.mjuteam4.mypage.dto.MyPlantResponse;
@@ -83,5 +84,18 @@ public class MypageService {
         Member loginMember = jwtUtil.getLoginMember();
 
         memberRepository.delete(loginMember);
+    }
+
+    @Transactional
+    public void updateMyInfo(UpdateMyInfoRequest request) {
+
+        Member loginMember = jwtUtil.getLoginMember();
+
+        loginMember.updateMember(
+                request.getEmail(),
+                request.getUsername()
+        );
+
+        memberRepository.save(loginMember);
     }
 }

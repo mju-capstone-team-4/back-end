@@ -53,4 +53,9 @@ public class Member {
         this.role = role;
         this.myPlantList = myPlantList;
     }
+
+    public void updateMember(String email, String username){
+        this.email = email;
+        this.username = username;
+    }
 }

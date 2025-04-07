@@ -6,6 +6,7 @@ import org.example.mjuteam4.global.result.ResultResponse;
 import org.example.mjuteam4.mypage.dto.MyPageResponse;
 import org.example.mjuteam4.mypage.dto.MyPlantResponse;
 import org.example.mjuteam4.mypage.dto.RegisterMyPlantRequest;
+import org.example.mjuteam4.mypage.dto.UpdateMyInfoRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,7 +38,7 @@ public class MyPageController {
         return ResponseEntity.ok().body(mypageService.getMyPlant());
     }
 
-    // 내 식물 삭제
+    // 내 식물 삭제]
     @DeleteMapping("/myplant/{myPlantId}")
     public ResponseEntity<ResultResponse> deleteMyPlant(@PathVariable String myPlantId){
         mypageService.deleteMyPlant(myPlantId);
@@ -52,4 +53,8 @@ public class MyPageController {
     }
 
     // 내 정보 변경
+    @PostMapping("/me")
+    public ResponseEntity<ResultResponse> updateMyInfo(@RequestBody UpdateMyInfoRequest request) {
+        mypageService.updateMyInfo(request);
+    }
 }
