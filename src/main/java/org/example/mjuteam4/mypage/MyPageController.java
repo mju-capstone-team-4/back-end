@@ -31,20 +31,25 @@ public class MyPageController {
         return ResponseEntity.ok().body(ResultResponse.of(ResultCode.REGISTER_MYPLANT_SUCCESS));
     }
 
+    // 내 식물 조회
     @GetMapping("/myplant")
     public ResponseEntity<List<MyPlantResponse>> getMyPlant(){
         return ResponseEntity.ok().body(mypageService.getMyPlant());
     }
 
+    // 내 식물 삭제
     @DeleteMapping("/myplant/{myPlantId}")
     public ResponseEntity<ResultResponse> deleteMyPlant(@PathVariable String myPlantId){
         mypageService.deleteMyPlant(myPlantId);
         return ResponseEntity.ok().body(ResultResponse.of(ResultCode.DELETE_MYPLANT_SUCCESS));
     }
 
+    // 회원 탈퇴
     @DeleteMapping("/me")
     public ResponseEntity<ResultResponse> deleteID(){
         mypageService.deleteID();
         return ResponseEntity.ok().body(ResultResponse.of(ResultCode.DELETE_MEMBER_SUCCESS));
     }
+
+    // 내 정보 변경
 }
