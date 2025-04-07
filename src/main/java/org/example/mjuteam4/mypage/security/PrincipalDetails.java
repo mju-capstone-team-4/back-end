@@ -1,7 +1,7 @@
-package org.example.mjuteam4.member.security;
+package org.example.mjuteam4.mypage.security;
 
 import lombok.Getter;
-import org.example.mjuteam4.member.Member;
+import org.example.mjuteam4.mypage.entity.Member;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

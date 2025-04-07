@@ -1,4 +1,4 @@
-package org.example.mjuteam4.member;
+package org.example.mjuteam4.mypage.entity;
 
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.mjuteam4.comment.entity.Comment;
 import org.example.mjuteam4.commentLike.entity.CommentLike;
-import org.example.mjuteam4.plant.Plant;
 import org.example.mjuteam4.question.entity.Question;
 import org.example.mjuteam4.tradePost.entity.TradePost;
 
@@ -38,7 +37,7 @@ public class Member {
     }
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Plant> plantList = new ArrayList<>();
+    private List<MyPlant> myPlantList = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", orphanRemoval = true, cascade = CascadeType.ALL)
     public List<Question> questions = new ArrayList<Question>();
@@ -63,13 +62,18 @@ public class Member {
     }
 
     @Builder
-    public Member(String email, String username, String profileUrl, String refreshToken, Role role, List<Plant> plantList) {
+    public Member(String email, String username, String profileUrl, String refreshToken, Role role, List<MyPlant> myPlantList) {
         this.email = email;
         this.username = username;
         this.profileUrl = profileUrl;
         this.refreshToken = refreshToken;
         this.role = role;
-        this.plantList = plantList;
+        this.myPlantList = myPlantList;
+    }
+
+    public void updateMember(String email, String username){
+        this.email = email;
+        this.username = username;
     }
 
     // 연관관계 편의 메서드

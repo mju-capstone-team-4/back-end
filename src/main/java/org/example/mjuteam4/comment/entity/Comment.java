@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.mjuteam4.comment.dto.request.CommentRequest;
 import org.example.mjuteam4.commentLike.entity.CommentLike;
-import org.example.mjuteam4.member.Member;
+import org.example.mjuteam4.mypage.entity.Member;
 import org.example.mjuteam4.question.entity.Question;
 
 import java.time.LocalDateTime;

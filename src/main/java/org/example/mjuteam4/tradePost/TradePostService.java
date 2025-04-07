@@ -1,8 +1,9 @@
 package org.example.mjuteam4.tradePost;
 
 import lombok.RequiredArgsConstructor;
-import org.example.mjuteam4.member.Member;
-import org.example.mjuteam4.member.MemberService;
+
+import org.example.mjuteam4.global.uitl.JwtUtil;
+import org.example.mjuteam4.mypage.entity.Member;
 import org.example.mjuteam4.storage.StorageService;
 import org.example.mjuteam4.tradePost.dto.request.TradePostRequest;
 import org.example.mjuteam4.tradePost.entity.TradePost;
@@ -21,14 +22,14 @@ import org.springframework.web.multipart.MultipartFile;
 public class TradePostService {
     private final TradePostRepository tradePostRepository;
     private final TradePostImageService tradePostImageService;
-    private final MemberService memberService;
     private final StorageService storageService;
+    private final JwtUtil jwtUtil;
 
     public TradePost createTradePost(Long memberId, TradePostRequest tradePostRequest) {
         TradePost tradePost = TradePost.create(tradePostRequest);
         TradePostImage tradePostImage = tradePostImageService.createTradePostImage(tradePostRequest.getImage());
         tradePost.addTradePostImage(tradePostImage);
-        Member member = memberService.findByMemberId(memberId);
+        Member member = jwtUtil.getLoginMember();
         member.addTradePost(tradePost);
         return tradePostRepository.save(tradePost);
     }

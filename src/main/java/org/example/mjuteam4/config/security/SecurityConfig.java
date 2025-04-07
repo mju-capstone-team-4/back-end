@@ -1,7 +1,7 @@
 package org.example.mjuteam4.config.security;
 
 import lombok.RequiredArgsConstructor;
-import org.example.mjuteam4.member.security.OAuth2MemberService;
+import org.example.mjuteam4.mypage.security.OAuth2MemberService;
 import org.example.mjuteam4.security.filter.TokenAuthenticationFilter;
 import org.example.mjuteam4.security.filter.JwtExceptionHandlingFilter;
 import org.example.mjuteam4.security.handler.CustomAccessDeniedHandler;

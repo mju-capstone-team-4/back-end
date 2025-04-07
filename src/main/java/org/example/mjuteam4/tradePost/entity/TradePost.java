@@ -3,7 +3,7 @@ package org.example.mjuteam4.tradePost.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.mjuteam4.member.Member;
+import org.example.mjuteam4.mypage.entity.Member;
 import org.example.mjuteam4.tradePost.dto.request.TradePostRequest;
 import org.example.mjuteam4.tradePostImage.entity.TradePostImage;
 import org.springframework.util.StringUtils;

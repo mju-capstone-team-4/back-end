@@ -5,8 +5,8 @@ import org.example.mjuteam4.comment.dto.request.CommentRequest;
 import org.example.mjuteam4.comment.entity.Comment;
 import org.example.mjuteam4.comment.exception.CommentNotFound;
 import org.example.mjuteam4.comment.exception.CommentAccessUnauthorized;
-import org.example.mjuteam4.member.Member;
-import org.example.mjuteam4.member.MemberService;
+import org.example.mjuteam4.global.uitl.JwtUtil;
+import org.example.mjuteam4.mypage.entity.Member;
 import org.example.mjuteam4.question.QuestionService;
 import org.example.mjuteam4.question.entity.Question;
 import org.springframework.data.domain.Page;
@@ -20,11 +20,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class CommentService {
     private final CommentRepository commentRepository;
     private final QuestionService questionService;
-    private final MemberService memberService;
+    private final JwtUtil jwtUtil;
     public Comment commentCreate(Long memberId, Long questionId, CommentRequest commentRequest) {
         Question question = questionService.findQuestionById(questionId);
-        Member member = memberService.findByMemberId(memberId);
-
+        Member member = jwtUtil.getLoginMember();
         Comment comment = Comment.createComment(commentRequest);
         comment.setQuestion(question);
         comment.setMember(member);

@@ -6,8 +6,9 @@ import org.example.mjuteam4.comment.entity.Comment;
 import org.example.mjuteam4.commentLike.entity.CommentLike;
 import org.example.mjuteam4.commentLike.exception.AlreadyLikedException;
 import org.example.mjuteam4.commentLike.exception.NotLikedException;
-import org.example.mjuteam4.member.Member;
-import org.example.mjuteam4.member.MemberService;
+
+import org.example.mjuteam4.global.uitl.JwtUtil;
+import org.example.mjuteam4.mypage.entity.Member;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,11 +18,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class CommentLikeService {
 
     private final CommentLikeRepository commentLikeRepository;
-    private final MemberService memberService;
     private final CommentService commentService;
+    private final JwtUtil jwtUtil;
 
     public CommentLike increaseLike(Long memberId, Long commentId) {
-        Member member = memberService.findByMemberId(memberId);
+        Member member = jwtUtil.getLoginMember();
         Comment comment = commentService.findByCommentId(commentId);
 
 
@@ -37,7 +38,7 @@ public class CommentLikeService {
 
 
     public void decreaseLike(Long memberId, Long commentId){
-        Member member = memberService.findByMemberId(memberId);
+        Member member = jwtUtil.getLoginMember();
         Comment comment = commentService.findByCommentId(commentId);
 
         if(!commentLikeRepository.existsByMemberAndComment(member, comment)) {

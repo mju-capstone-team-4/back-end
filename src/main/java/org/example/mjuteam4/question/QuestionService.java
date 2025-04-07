@@ -2,8 +2,9 @@ package org.example.mjuteam4.question;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.mjuteam4.member.Member;
-import org.example.mjuteam4.member.MemberService;
+
+import org.example.mjuteam4.global.uitl.JwtUtil;
+import org.example.mjuteam4.mypage.entity.Member;
 import org.example.mjuteam4.question.dto.request.QuestionCreateRequest;
 import org.example.mjuteam4.question.dto.request.QuestionUpdateRequest;
 import org.example.mjuteam4.question.dto.response.QuestionResponse;
@@ -24,9 +25,9 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 public class QuestionService {
 
-    private final MemberService memberService;
     private final QuestionImageService questionImageService;
     private final StorageService storageService;
+    private final JwtUtil jwtUtil;
 
     private final QuestionRepository questionRepository;
 
@@ -34,7 +35,7 @@ public class QuestionService {
         Question question = Question.createQuestion(questionCreateRequest);
         QuestionImage questionImage = questionImageService.createQuestionImage(questionCreateRequest.getImage());
         question.setQuestionImage(questionImage);
-        Member member = memberService.findByMemberId(memberId);
+        Member member = jwtUtil.getLoginMember();
         member.addQuestion(question);
         return questionRepository.save(question);
     }
