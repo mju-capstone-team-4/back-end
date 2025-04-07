@@ -35,4 +35,10 @@ public class MyPageController {
     public ResponseEntity<List<MyPlantResponse>> getMyPlant(){
         return ResponseEntity.ok().body(mypageService.getMyPlant());
     }
+
+    @DeleteMapping("/myplant/{myPlantId}")
+    public ResponseEntity<ResultResponse> deleteMyPlant(@PathVariable String myPlantId){
+        mypageService.deleteMyPlant(myPlantId);
+        return ResponseEntity.ok().body(ResultResponse.of(ResultCode.DELETE_MYPLANT_SUCCESS));
+    }
 }

@@ -8,6 +8,7 @@ import lombok.Getter;
 public enum ResultCode {
 
     REGISTER_MYPLANT_SUCCESS(200, "MP001", "내 식물 등록 성공"),
+    DELETE_MYPLANT_SUCCESS(200, "DELETE_MYPLANT_SUCCESS", "내 식물 삭제 성공"),
 
     ;
 

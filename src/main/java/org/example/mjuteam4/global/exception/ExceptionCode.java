@@ -17,6 +17,8 @@ public enum ExceptionCode {
     AUTH_JWT_AUTHENTICATION_FAILED(401, "AUTH_JWT_AUTHENTICATION_FAILED", "JWT 인증 실패"),
     AUTH_ILLEGAL_REGISTRATION_ID(401, "AUTH_ILLEGAL_REGISTRATION_ID", "잘못된 Registration ID입니다."),
 
+    // myPlant
+    MY_PLANT_NOT_FOUND(404, "MY_PLANT_NOT_FOUND", "내 식물을 찾을 수 없습니다"),
     ;
 
     private final int status;

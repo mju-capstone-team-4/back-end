@@ -2,6 +2,8 @@ package org.example.mjuteam4.mypage;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.example.mjuteam4.global.exception.ExceptionCode;
+import org.example.mjuteam4.global.exception.GlobalException;
 import org.example.mjuteam4.global.uitl.JwtUtil;
 import org.example.mjuteam4.mypage.dto.MyPageResponse;
 import org.example.mjuteam4.mypage.dto.RegisterMyPlantRequest;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -65,5 +68,12 @@ public class MypageService {
         }
 
         return myPlantResponseList;
+    }
+
+    public void deleteMyPlant(String myPlantId) {
+        MyPlant myPlant = myPlantRepository.findByPlantId(myPlantId)
+                .orElseThrow(() -> new GlobalException(ExceptionCode.MY_PLANT_NOT_FOUND));
+
+        myPlantRepository.delete(myPlant);
     }
 }
