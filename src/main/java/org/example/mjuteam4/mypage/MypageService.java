@@ -70,10 +70,18 @@ public class MypageService {
         return myPlantResponseList;
     }
 
+    @Transactional
     public void deleteMyPlant(String myPlantId) {
         MyPlant myPlant = myPlantRepository.findByPlantId(myPlantId)
                 .orElseThrow(() -> new GlobalException(ExceptionCode.MY_PLANT_NOT_FOUND));
 
         myPlantRepository.delete(myPlant);
+    }
+
+    @Transactional
+    public void deleteID() {
+        Member loginMember = jwtUtil.getLoginMember();
+
+        memberRepository.delete(loginMember);
     }
 }

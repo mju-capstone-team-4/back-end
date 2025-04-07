@@ -41,4 +41,10 @@ public class MyPageController {
         mypageService.deleteMyPlant(myPlantId);
         return ResponseEntity.ok().body(ResultResponse.of(ResultCode.DELETE_MYPLANT_SUCCESS));
     }
+
+    @DeleteMapping("/me")
+    public ResponseEntity<ResultResponse> deleteID(){
+        mypageService.deleteID();
+        return ResponseEntity.ok().body(ResultResponse.of(ResultCode.DELETE_MEMBER_SUCCESS));
+    }
 }
