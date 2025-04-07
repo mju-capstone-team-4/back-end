@@ -40,7 +40,7 @@ public class MyPageController {
 
     // 내 식물 삭제]
     @DeleteMapping("/myplant/{myPlantId}")
-    public ResponseEntity<ResultResponse> deleteMyPlant(@PathVariable String myPlantId){
+    public ResponseEntity<ResultResponse> deleteMyPlant(@PathVariable Long myPlantId){
         mypageService.deleteMyPlant(myPlantId);
         return ResponseEntity.ok().body(ResultResponse.of(ResultCode.DELETE_MYPLANT_SUCCESS));
     }

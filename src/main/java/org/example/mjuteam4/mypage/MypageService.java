@@ -72,8 +72,8 @@ public class MypageService {
     }
 
     @Transactional
-    public void deleteMyPlant(String myPlantId) {
-        MyPlant myPlant = myPlantRepository.findByPlantId(myPlantId)
+    public void deleteMyPlant(Long myPlantId) {
+        MyPlant myPlant = myPlantRepository.findById(myPlantId)
                 .orElseThrow(() -> new GlobalException(ExceptionCode.MY_PLANT_NOT_FOUND));
 
         myPlantRepository.delete(myPlant);
