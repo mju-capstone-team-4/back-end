@@ -12,7 +12,8 @@ public enum ResultCode {
     DELETE_MYPLANT_SUCCESS(200, "DELETE_MYPLANT_SUCCESS", "내 식물 삭제 성공"),
 
     // member
-    DELETE_MEMBER_SUCCESS(200, "DELETE_MEMBER_SUCCESS", "회원 탈퇴 성공")
+    DELETE_MEMBER_SUCCESS(200, "DELETE_MEMBER_SUCCESS", "회원 탈퇴 성공"),
+    UPDATE_MY_INFO_SUCCESS(200, "UPDATE_MY_INFO_SUCCESS", "내 정보 변경 성공"),
     ;
 
     private final int status;

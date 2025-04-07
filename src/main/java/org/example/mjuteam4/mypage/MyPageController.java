@@ -56,5 +56,6 @@ public class MyPageController {
     @PostMapping("/me")
     public ResponseEntity<ResultResponse> updateMyInfo(@RequestBody UpdateMyInfoRequest request) {
         mypageService.updateMyInfo(request);
+        return ResponseEntity.ok().body(ResultResponse.of(ResultCode.UPDATE_MY_INFO_SUCCESS));
     }
 }
