@@ -1,6 +1,7 @@
 package org.example.mjuteam4.question;
 
 import lombok.RequiredArgsConstructor;
+import org.example.mjuteam4.global.uitl.JwtUtil;
 import org.example.mjuteam4.question.dto.request.QuestionCreateRequest;
 import org.example.mjuteam4.question.dto.request.QuestionUpdateRequest;
 import org.example.mjuteam4.question.dto.response.QuestionResponse;
@@ -16,18 +17,19 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class QuestionController {
 
+    private final JwtUtil jwtUtil;
     private final QuestionService questionService;
 
+    // 질문 생성
     @PostMapping("/create")
     public ResponseEntity<QuestionResponse> questionCreate(@ModelAttribute QuestionCreateRequest questionCreateRequest) {
-        // 임시 memberId, 로컬에서 테스트 진행할 때, 직접 DB에 memberId가 999인 member를 생성
-        // 후에 회원 관련 기능 개발 후 수정
-        Long memberId = 999L;
+        Long memberId = jwtUtil.getLoginMember().getId();
         Question question = questionService.createQuestion(memberId, questionCreateRequest);
         QuestionResponse questionResponse = QuestionResponse.createQuestionResponse(question);
         return ResponseEntity.ok().body(questionResponse);
     }
 
+    // 질문 여러 건 조회(기본 10개)
     @GetMapping("/all")
     public ResponseEntity<Page<QuestionResponse>> questionList(
             @RequestParam(value = "page", defaultValue = "0") int page,
@@ -38,6 +40,7 @@ public class QuestionController {
         return ResponseEntity.ok().body(response);
     }
 
+    // 질문 단 건 조회
     @GetMapping("/{question_id}")
     public ResponseEntity<QuestionResponse> questionDetail(@PathVariable(value = "question_id") Long questionId) {
         Question question = questionService.questionDetail(questionId);
@@ -45,21 +48,25 @@ public class QuestionController {
         return ResponseEntity.ok().body(questionResponse);
     }
 
+    // 질문 수정
     @PutMapping("/{question_id}")
     public ResponseEntity<QuestionResponse> questionModify(
             @PathVariable(value = "question_id") Long questionId,
             @ModelAttribute QuestionUpdateRequest questionUpdateRequest
     ) {
-        Question question = questionService.modifyQuestion(questionId, questionUpdateRequest);
+        Long memberId = jwtUtil.getLoginMember().getId();
+        Question question = questionService.modifyQuestion(memberId, questionId, questionUpdateRequest);
         QuestionResponse questionResponse = QuestionResponse.createQuestionResponse(question);
         return ResponseEntity.ok().body(questionResponse);
     }
 
+    //질문 삭제
     @DeleteMapping("/{question_id}")
     public ResponseEntity<String> questionDelete(
             @PathVariable(value = "question_id") Long questionId)
     {
-        questionService.deleteQuestion(questionId);
+        Long memberId = jwtUtil.getLoginMember().getId();
+        questionService.deleteQuestion(memberId, questionId);
         return ResponseEntity.ok().body("Deleted Success");
     }
 
