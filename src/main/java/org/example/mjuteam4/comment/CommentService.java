@@ -14,6 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -31,9 +33,9 @@ public class CommentService {
         return comment;
     }
 
-    public Page<Comment> getCommentList(Pageable pageable)
+    public Page<Comment> getCommentList(Long questionId, Pageable pageable)
     {
-        return commentRepository.findAll(pageable);
+        return commentRepository.findByQuestionId(questionId,pageable);
     }
 
     public Comment commentModify(Long memberId, Long commentId, CommentRequest commentRequest){

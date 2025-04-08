@@ -1,6 +1,7 @@
 package org.example.mjuteam4.tradePost;
 
 import lombok.RequiredArgsConstructor;
+import org.example.mjuteam4.global.uitl.JwtUtil;
 import org.example.mjuteam4.tradePost.dto.request.TradePostRequest;
 import org.example.mjuteam4.tradePost.dto.response.TradePostResponse;
 import org.example.mjuteam4.tradePost.entity.TradePost;
@@ -15,10 +16,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/trade")
 public class TradePostController {
     private final TradePostService tradePostService;
-
+    private final JwtUtil jwtUtil;
     @PostMapping("/create")
     public ResponseEntity<TradePostResponse> tradePostCreate(@ModelAttribute TradePostRequest tradePostRequest) {
-        Long memberId = 999L;
+        Long memberId = jwtUtil.getLoginMember().getId();
         TradePost tradePost = tradePostService.createTradePost(memberId, tradePostRequest);
         TradePostResponse tradePostResponse = TradePostResponse.create(tradePost);
         return ResponseEntity.ok().body(tradePostResponse);
@@ -43,20 +44,22 @@ public class TradePostController {
     }
 
     @PutMapping("/{trade-post-id}")
-    public ResponseEntity<TradePostResponse> questionModify(
+    public ResponseEntity<TradePostResponse> tradePostModify(
             @PathVariable(value = "trade-post-id") Long tradePostId,
             @ModelAttribute TradePostRequest tradePostRequest
     ) {
-        TradePost tradePost = tradePostService.modifyTradePost(tradePostId, tradePostRequest);
+        Long memberId = jwtUtil.getLoginMember().getId();
+        TradePost tradePost = tradePostService.modifyTradePost(memberId, tradePostId, tradePostRequest);
         TradePostResponse tradePostResponse = TradePostResponse.create(tradePost);
         return ResponseEntity.ok().body(tradePostResponse);
     }
 
     @DeleteMapping("/{trade-post-id}")
-    public ResponseEntity<String> questionDelete(
+    public ResponseEntity<String> tradePostDelete(
             @PathVariable(value = "trade-post-id") Long tradePostId)
     {
-        tradePostService.deleteTradePost(tradePostId);
+        Long memberId = jwtUtil.getLoginMember().getId();
+        tradePostService.deleteTradePost(memberId, tradePostId);
         return ResponseEntity.ok().body("Deleted Success");
     }
 

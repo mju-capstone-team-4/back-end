@@ -6,6 +6,7 @@ import org.example.mjuteam4.comment.entity.Comment;
 import org.example.mjuteam4.commentLike.dto.response.CommentLikeResponse;
 import org.example.mjuteam4.commentLike.dto.response.CommentLikeTotalResponse;
 import org.example.mjuteam4.commentLike.entity.CommentLike;
+import org.example.mjuteam4.global.uitl.JwtUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,8 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/comments/")
 public class CommentLikeController {
-
-    private final Long memberId = 999L;
+    private final JwtUtil jwtUtil;
     private final CommentLikeService commentLikeService;
     private final CommentService commentService;
 
@@ -22,6 +22,7 @@ public class CommentLikeController {
     @PostMapping("/{comment-id}/likes")
     public ResponseEntity<CommentLikeResponse> likeUp(
             @PathVariable(value = "comment-id") Long commentId){
+        Long memberId = jwtUtil.getLoginMember().getId();
         CommentLike commentLike = commentLikeService.increaseLike(memberId, commentId);
         CommentLikeResponse commentLikeResponse = CommentLikeResponse.createWithCommentLike(commentLike, true);
         return ResponseEntity.status(201).body(commentLikeResponse);
@@ -32,6 +33,7 @@ public class CommentLikeController {
     public ResponseEntity<CommentLikeResponse> likeDown(
             @PathVariable(value = "comment-id") Long commentId)
     {
+        Long memberId = jwtUtil.getLoginMember().getId();
         commentLikeService.decreaseLike(memberId,commentId);
         Comment comment = commentService.findByCommentId(commentId);
         CommentLikeResponse commentLikeResponse = CommentLikeResponse.createWithComment(comment, false);

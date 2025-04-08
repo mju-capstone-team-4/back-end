@@ -9,6 +9,7 @@ import org.example.mjuteam4.question.dto.request.QuestionCreateRequest;
 import org.example.mjuteam4.question.dto.request.QuestionUpdateRequest;
 import org.example.mjuteam4.question.dto.response.QuestionResponse;
 import org.example.mjuteam4.question.entity.Question;
+import org.example.mjuteam4.question.exception.QuestionAccessUnauthorized;
 import org.example.mjuteam4.question.exception.QuestionNotFound;
 import org.example.mjuteam4.questionImage.QuestionImageService;
 import org.example.mjuteam4.questionImage.entity.QuestionImage;
@@ -36,6 +37,7 @@ public class QuestionService {
         QuestionImage questionImage = questionImageService.createQuestionImage(questionCreateRequest.getImage());
         question.setQuestionImage(questionImage);
         Member member = jwtUtil.getLoginMember();
+        System.out.println(member);
         member.addQuestion(question);
         return questionRepository.save(question);
     }
@@ -49,10 +51,13 @@ public class QuestionService {
         return questionRepository.findById(questionId).orElseThrow(QuestionNotFound::new);
     }
 
-    public Question modifyQuestion(Long questionId, QuestionUpdateRequest questionUpdateRequest) {
+    public Question modifyQuestion(Long memberId, Long questionId, QuestionUpdateRequest questionUpdateRequest) {
 
-        // 수정 대상 질문 조회 후 제목, 내용 수정
-        Question modifiedQuestion = questionRepository.findById(questionId).orElseThrow(QuestionNotFound::new).modifyQuestion(questionUpdateRequest);
+        // 권한 체크
+        Question question = checkAccessAndReturnQuestion(memberId, questionId);
+
+        // 제목, 글 수정
+        Question modifiedQuestion = question.modifyQuestion(questionUpdateRequest);
 
         // 이미지 수정
         // 이미지 변경 요청이 있다면, 기존 s3이미지 삭제하고 새로운 이미지 업로드
@@ -71,7 +76,8 @@ public class QuestionService {
         return modifiedQuestion;
     }
 
-    public void deleteQuestion(Long questionId) {
+    public void deleteQuestion(Long memberId, Long questionId) {
+        checkAccessAndReturnQuestion(memberId,questionId);
         questionRepository.deleteById(questionId);
     }
 
@@ -79,6 +85,14 @@ public class QuestionService {
         return questionRepository.findById(questionId).orElseThrow(QuestionNotFound::new);
     }
 
+    public Question checkAccessAndReturnQuestion(Long memberId, Long questionId){
+        // 수정 대상 질문 조회 후 제목, 내용 수정
+        Question question = questionRepository.findById(questionId).orElseThrow(QuestionNotFound::new);
 
+        if(question.getMember().getId() != memberId) {
+            throw new QuestionAccessUnauthorized();
+        }
+        return question;
+    }
 
 }
