@@ -1,6 +1,7 @@
 package org.example.mjuteam4.global.uitl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.mjuteam4.mypage.entity.Member;
 import org.example.mjuteam4.mypage.repository.MemberRepository;
 import org.example.mjuteam4.mypage.exception.MemberNotFoundException;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtUtil {
 
     private final MemberRepository memberRepository;
@@ -22,9 +24,9 @@ public class JwtUtil {
      * @return
      */
     public Member getLoginMember(){
+
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return memberRepository.findByUsername(name)
                 .orElseThrow(MemberNotFoundException::new);
     }

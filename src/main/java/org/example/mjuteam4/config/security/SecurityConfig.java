@@ -2,11 +2,13 @@ package org.example.mjuteam4.config.security;
 
 import lombok.RequiredArgsConstructor;
 import org.example.mjuteam4.mypage.security.OAuth2MemberService;
+import org.example.mjuteam4.security.filter.JwtAuthenticationFilter;
 import org.example.mjuteam4.security.filter.TokenAuthenticationFilter;
 import org.example.mjuteam4.security.filter.JwtExceptionHandlingFilter;
 import org.example.mjuteam4.security.handler.CustomAccessDeniedHandler;
 import org.example.mjuteam4.security.handler.CustomAuthenticationEntryPoint;
 import org.example.mjuteam4.security.handler.OAuth2SuccessHandler;
+import org.example.mjuteam4.security.provider.TokenProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -31,6 +33,7 @@ public class SecurityConfig {
     private final TokenAuthenticationFilter tokenAuthenticationFilter;
     private final OAuth2MemberService oAuth2MemberService;
     private final OAuth2SuccessHandler oauth2SuccessHandler;
+    private final TokenProvider tokenProvider;
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() { // security를 적용하지 않을 리소스
@@ -78,6 +81,7 @@ public class SecurityConfig {
                 )
 
                 .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtExceptionHandlingFilter(), UsernamePasswordAuthenticationFilter.class)
 
                 // 인증 예외 핸들링

@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -60,6 +61,28 @@ public class TokenProvider {
 
     public String generateRefreshToken(Authentication authentication, String accessToken) {
         return generateToken(authentication, REFRESH_TOKEN_EXPIRE_TIME);
+    }
+
+    public String getTestToken(String username) {
+        Date now = new Date();
+        Date expiredDate = new Date(now.getTime() + 1231233);
+
+        String jwt = Jwts.builder()
+                .subject(username)
+                .issuedAt(now)
+                .claim(KEY_ROLE, "ROLE_USER")
+                .signWith(secretKey, Jwts.SIG.HS512)
+                .expiration(expiredDate)
+                .compact();
+
+        // 권한 리스트 생성
+        List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+
+        // Authentication 객체 생성 후 SecurityContext에 저장
+        Authentication authentication = new UsernamePasswordAuthenticationToken(username, null, authorities);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        return jwt;
     }
 
     private String generateToken(Authentication authentication, long expireTime) {

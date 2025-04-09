@@ -7,6 +7,7 @@ import org.example.mjuteam4.mypage.dto.MyPageResponse;
 import org.example.mjuteam4.mypage.dto.MyPlantResponse;
 import org.example.mjuteam4.mypage.dto.RegisterMyPlantRequest;
 import org.example.mjuteam4.mypage.dto.UpdateMyInfoRequest;
+import org.example.mjuteam4.security.provider.TokenProvider;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +19,12 @@ import java.util.List;
 public class MyPageController {
 
     private final MypageService mypageService;
+    private final TokenProvider tokenProvider;
+
+    @GetMapping("me")
+    public ResponseEntity<String> me() {
+        return ResponseEntity.ok().body(tokenProvider.getTestToken("anonymous"));
+    }
 
     // 마이페이지 조회
     @GetMapping()
