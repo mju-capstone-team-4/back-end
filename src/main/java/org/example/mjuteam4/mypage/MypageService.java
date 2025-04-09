@@ -13,6 +13,8 @@ import org.example.mjuteam4.mypage.repository.MyPlantRepository;
 import org.example.mjuteam4.mypage.dto.MyPlantResponse;
 import org.example.mjuteam4.mypage.entity.Member;
 import org.example.mjuteam4.mypage.repository.MemberRepository;
+import org.example.mjuteam4.plant.Plant;
+import org.example.mjuteam4.plant.PlantRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -26,6 +28,7 @@ public class MypageService {
     private final JwtUtil jwtUtil;
     private final MemberRepository memberRepository;
     private final MyPlantRepository myPlantRepository;
+    private final PlantRepository plantRepository;
 
     public MyPageResponse getMyPage() {
 
@@ -46,11 +49,17 @@ public class MypageService {
     public void registerMyPlant(RegisterMyPlantRequest request) {
         Member loginMember = jwtUtil.getLoginMember();
 
+        Plant plant = plantRepository.findById(request.getPlantId())
+                .orElseThrow(() -> new GlobalException(ExceptionCode.PLANT_NOT_FOUND));
+
         MyPlant myplant = MyPlant.builder()
                 .member(loginMember)
+                .plant(plant)
                 .name(request.getName())
                 .description(request.getDescription())
                 .build();
+
+        loginMember.getMyPlantList().add(myplant);
 
         myPlantRepository.save(myplant);
     }

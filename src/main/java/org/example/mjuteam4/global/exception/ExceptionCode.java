@@ -33,6 +33,9 @@ public enum ExceptionCode {
 
     // myPlant
     MY_PLANT_NOT_FOUND(404, "MY_PLANT_NOT_FOUND", "내 식물을 찾을 수 없습니다"),
+
+    //plant
+    PLANT_NOT_FOUND(404, "PLANT_NOT_FOUND", "해당 ID를 가진 식물이 없습니다"),
     ;
 
 
