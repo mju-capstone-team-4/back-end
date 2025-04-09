@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class PredictResponse {
-    private String prediction;
+public class DiseaseResponse {
+    private String result;
     private Double confidence;
 }
