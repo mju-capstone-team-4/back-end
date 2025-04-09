@@ -21,35 +21,15 @@ public class MyPageController {
     private final MypageService mypageService;
     private final TokenProvider tokenProvider;
 
-    @GetMapping("me")
+    @GetMapping("token")
     public ResponseEntity<String> me() {
         return ResponseEntity.ok().body(tokenProvider.getTestToken("anonymous"));
     }
 
     // 마이페이지 조회
-    @GetMapping()
+    @GetMapping("me")
     public ResponseEntity<MyPageResponse> getMyPage(){
         return ResponseEntity.ok().body(mypageService.getMyPage());
-    }
-
-    // 내 식물 등록
-    @PostMapping("/myplant")
-    public ResponseEntity<ResultResponse> registerMyPlant(@RequestBody RegisterMyPlantRequest registerMyPlantRequest){
-        mypageService.registerMyPlant(registerMyPlantRequest);
-        return ResponseEntity.ok().body(ResultResponse.of(ResultCode.REGISTER_MYPLANT_SUCCESS));
-    }
-
-    // 내 식물 조회
-    @GetMapping("/myplant")
-    public ResponseEntity<List<MyPlantResponse>> getMyPlant(){
-        return ResponseEntity.ok().body(mypageService.getMyPlant());
-    }
-
-    // 내 식물 삭제]
-    @DeleteMapping("/myplant/{myPlantId}")
-    public ResponseEntity<ResultResponse> deleteMyPlant(@PathVariable Long myPlantId){
-        mypageService.deleteMyPlant(myPlantId);
-        return ResponseEntity.ok().body(ResultResponse.of(ResultCode.DELETE_MYPLANT_SUCCESS));
     }
 
     // 회원 탈퇴
@@ -65,4 +45,26 @@ public class MyPageController {
         mypageService.updateMyInfo(request);
         return ResponseEntity.ok().body(ResultResponse.of(ResultCode.UPDATE_MY_INFO_SUCCESS));
     }
+
+    // 내 식물 등록
+    @PostMapping("/myplant")
+    public ResponseEntity<ResultResponse> registerMyPlant(@RequestBody RegisterMyPlantRequest registerMyPlantRequest){
+        mypageService.registerMyPlant(registerMyPlantRequest);
+        return ResponseEntity.ok().body(ResultResponse.of(ResultCode.REGISTER_MYPLANT_SUCCESS));
+    }
+
+    // 내 식물 조회
+    @GetMapping("/myplant")
+    public ResponseEntity<List<MyPlantResponse>> getMyPlant(){
+        return ResponseEntity.ok().body(mypageService.getMyPlant());
+    }
+
+    // 내 식물 삭제
+    @DeleteMapping("/myplant/{myPlantId}")
+    public ResponseEntity<ResultResponse> deleteMyPlant(@PathVariable Long myPlantId){
+        mypageService.deleteMyPlant(myPlantId);
+        return ResponseEntity.ok().body(ResultResponse.of(ResultCode.DELETE_MYPLANT_SUCCESS));
+    }
+
+
 }
