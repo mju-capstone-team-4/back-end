@@ -10,12 +10,12 @@ import org.example.mjuteam4.comment.entity.Comment;
 public class CommentResponse {
     private Long commentId;
     private String content;
-    private Long recommendCount;
+    private Integer likeCount;
 
     private CommentResponse(final Comment comment) {
         this.commentId = comment.getId();
         this.content = comment.getContent();
-        this.recommendCount = comment.getRecommendCount();
+        this.likeCount = comment.getCommentLikes().size();
     }
 
     public static CommentResponse createCommentResponse(final Comment comment) {
