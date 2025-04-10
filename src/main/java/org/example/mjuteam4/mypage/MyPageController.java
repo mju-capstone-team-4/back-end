@@ -64,7 +64,7 @@ public class MyPageController {
     }
 
     @GetMapping("plants")
-    public ResponseEntity<List<PlantsForRegisterResponse>> searchPlantByName(String plantName) {
+    public ResponseEntity<List<PlantsForRegisterResponse>> searchPlantByName(@RequestBody String plantName) {
         return ResponseEntity.ok().body(mypageService.searchPlantByName(plantName));
     }
 
