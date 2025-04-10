@@ -5,12 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.example.mjuteam4.global.exception.ExceptionCode;
 import org.example.mjuteam4.global.exception.GlobalException;
 import org.example.mjuteam4.global.uitl.JwtUtil;
-import org.example.mjuteam4.mypage.dto.MyPageResponse;
-import org.example.mjuteam4.mypage.dto.RegisterMyPlantRequest;
-import org.example.mjuteam4.mypage.dto.UpdateMyInfoRequest;
+import org.example.mjuteam4.mypage.dto.*;
 import org.example.mjuteam4.mypage.entity.MyPlant;
 import org.example.mjuteam4.mypage.repository.MyPlantRepository;
-import org.example.mjuteam4.mypage.dto.MyPlantResponse;
 import org.example.mjuteam4.mypage.entity.Member;
 import org.example.mjuteam4.mypage.repository.MemberRepository;
 import org.example.mjuteam4.plant.Plant;
@@ -106,5 +103,22 @@ public class MypageService {
         );
 
         memberRepository.save(loginMember);
+    }
+
+    public List<PlantsForRegisterResponse> searchPlantByName(String plantName) {
+
+        List<Plant> allByName = plantRepository.findAllByName(plantName);
+        List<PlantsForRegisterResponse> plantsForRegisterResponseList = new ArrayList<>();
+
+        for (Plant plant : allByName) {
+            PlantsForRegisterResponse plantsForRegisterResponse = PlantsForRegisterResponse.builder()
+                    .id(plant.getId())
+                    .name(plant.getName())
+                    .build();
+
+            plantsForRegisterResponseList.add(plantsForRegisterResponse);
+        }
+
+        return plantsForRegisterResponseList;
     }
 }
