@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.mjuteam4.plant.Plant;
 
+import java.time.LocalDate;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -17,6 +19,8 @@ public class MyPlant {
     private String name;
 
     private String description;
+
+    private LocalDate lastWateredDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;

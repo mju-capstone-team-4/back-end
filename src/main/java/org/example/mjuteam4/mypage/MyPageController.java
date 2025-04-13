@@ -68,5 +68,10 @@ public class MyPageController {
         return ResponseEntity.ok().body(mypageService.searchPlantByName(plantName));
     }
 
+    @GetMapping("/myplant/{myPlantId}")
+    public ResponseEntity<MyPlantResponse> getMyPlantSchedule(@PathVariable Long myPlantId) {
+        return ResponseEntity.ok().body(mypageService.getMyPlantSchedule(myPlantId));
+    }
+
 
 }

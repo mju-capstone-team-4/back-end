@@ -15,4 +15,6 @@ public class Plant {
     private String name;
 
     private String description;
+
+    private int waterCyclingDays;
 }

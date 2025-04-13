@@ -14,6 +14,7 @@ import org.example.mjuteam4.plant.Plant;
 import org.example.mjuteam4.plant.PlantRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,10 +33,10 @@ public class MypageService {
         Member loginMember = jwtUtil.getLoginMember();
 
         List<MyPlant> myPlantList = loginMember.getMyPlantList();
-        List<MyPlantResponse> myPlantResponseList = new ArrayList<>();
+        List<MyPlantListResponse> myPlantResponseList = new ArrayList<>();
 
         for (MyPlant myPlant : myPlantList) {
-            MyPlantResponse myPlantResponse = MyPlantResponse.from(myPlant);
+            MyPlantListResponse myPlantResponse = MyPlantListResponse.from(myPlant);
             myPlantResponseList.add(myPlantResponse);
         }
 
@@ -61,16 +62,16 @@ public class MypageService {
         myPlantRepository.save(myplant);
     }
 
-    public List<MyPlantResponse> getMyPlant() {
+    public List<MyPlantListResponse> getMyPlant() {
 
         Member loginMember = jwtUtil.getLoginMember();
 
         List<MyPlant> myPlantList = loginMember.getMyPlantList();
 
-        List<MyPlantResponse> myPlantResponseList = new ArrayList<>();
+        List<MyPlantListResponse> myPlantResponseList = new ArrayList<>();
 
         for (MyPlant myPlant : myPlantList) {
-            MyPlantResponse myPlantResponse = MyPlantResponse.from(myPlant);
+            MyPlantListResponse myPlantResponse = MyPlantListResponse.from(myPlant);
             myPlantResponseList.add(myPlantResponse);
         }
 
@@ -120,5 +121,34 @@ public class MypageService {
         }
 
         return plantsForRegisterResponseList;
+    }
+
+    public MyPlantResponse getMyPlantSchedule(Long myPlantId) {
+
+        MyPlant myPlant = myPlantRepository.findById(myPlantId)
+                .orElseThrow(() -> new GlobalException(ExceptionCode.MY_PLANT_NOT_FOUND));
+
+        List<LocalDate> wateringDates = calculateNextWateringDates(myPlant, 60); // 2개월 정도 커버
+
+        return MyPlantResponse.builder()
+                .plantId(myPlant.getId())
+                .wateringDates(wateringDates)
+                .plantName(myPlant.getName())
+                .build();
+    }
+
+    private List<LocalDate> calculateNextWateringDates(MyPlant myPlant, int daysAhead) {
+        List<LocalDate> result = new ArrayList<>();
+
+        int cycle = myPlant.getPlant().getWaterCyclingDays(); // 항상 Plant에 저장된 주기 사용
+        LocalDate nextDate = myPlant.getLastWateredDate().plusDays(cycle); // 마지막 물준날짜 + 주기
+        LocalDate endDate = LocalDate.now().plusDays(daysAhead); // 오늘부터 daysAhead(60일) 후까지 커버
+
+        while (!nextDate.isAfter(endDate)) {
+            result.add(nextDate);
+            nextDate = nextDate.plusDays(cycle);
+        }
+
+        return result;
     }
 }
