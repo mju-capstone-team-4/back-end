@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.mjuteam4.comment.entity.Comment;
 import org.example.mjuteam4.commentLike.entity.CommentLike;
+import org.example.mjuteam4.disease.dto.Disease;
 import org.example.mjuteam4.question.entity.Question;
 import org.example.mjuteam4.tradePost.entity.TradePost;
 
@@ -50,6 +51,11 @@ public class Member {
 
     @OneToMany(mappedBy = "member", orphanRemoval = true, cascade = CascadeType.ALL)
     public List<TradePost> tradePosts = new ArrayList<>();
+
+    // 식물 진단
+    @OneToMany(mappedBy = "member", orphanRemoval = true, cascade = CascadeType.ALL)
+    public List<Disease> diseaseList = new ArrayList<>();
+
 
     public Member(String email, String username, String profileUrl) {
         this.email = email;

@@ -9,6 +9,7 @@ public enum ExceptionCode {
 
     //question
     QUESTION_NOT_FOUND(404, "QUESTION_NOT_FOUND","질문을 찾을 수 없습니다"),
+    QUESTION_UNAUTHORIZED_EXCEPTION(403, "QUESTION_UNAUTHORIZED_EXCEPTION", "질문을 수정할 수 있는 권한이 없습니다."),
 
     //comment
     COMMENT_NOT_FOUND(404,"COMMENT_NOT_FOUND","댓글을 찾을 수 없습니다"),
@@ -21,6 +22,8 @@ public enum ExceptionCode {
 
     //tradePost
     TRADE_POST_NOT_FOUND(404,"TRADE_POST_NOT_FOUND","해당 거래 게시글을 찾을 수 없습니다"),
+    TRADE_POST_UNAUTHORIZED_EXCEPTION(403, "QUESTION_UNAUTHORIZED_EXCEPTION", "질문을 수정할 수 있는 권한이 없습니다."),
+
     // member
     MEMBER_NOT_FOUND(404, "MEMBER_001", "사용자를 찾을 수 없음"),
     MEMBER_ALREADY_EXISTS(400, "MEMBER_002", "이미 가입된 유저입니다"),

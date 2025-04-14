@@ -27,6 +27,8 @@ public class JwtUtil {
 
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
 
+        System.out.println("jwtutil: " + name);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return memberRepository.findByUsername(name)
                 .orElseThrow(MemberNotFoundException::new);
     }

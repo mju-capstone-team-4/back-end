@@ -21,7 +21,6 @@ public class Comment {
     @Column(name = "comment_id")
     private Long id;
     private String content;
-    private Long recommendCount;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -39,10 +38,8 @@ public class Comment {
     // 생성자
     private Comment(final CommentRequest commentRequest){
         this.content = commentRequest.getComment();
-        this.recommendCount = 0L;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
-
     }
 
     //생성 메서드

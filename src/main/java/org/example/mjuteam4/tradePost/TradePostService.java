@@ -42,9 +42,11 @@ public class TradePostService {
         return tradePostRepository.findById(tradePostId).orElseThrow(TradePostNotFound::new);
     }
 
-    public TradePost modifyTradePost(Long tradePostId, TradePostRequest tradePostRequest) {
+    public TradePost modifyTradePost(Long memberId, Long tradePostId, TradePostRequest tradePostRequest) {
         // 수정 대상 질문 조회 후 제목, 내용 수정
-        TradePost modifiedTradePost = tradePostRepository.findById(tradePostId).orElseThrow(TradePostNotFound::new).modifyTradePost(tradePostRequest);
+        TradePost tradePost = checkAccessAndReturnTradePost(memberId, tradePostId);
+        TradePost modifiedTradePost = tradePost.modifyTradePost(tradePostRequest);
+
         // 이미지 수정
         // 이미지 변경 요청이 있다면, 기존 s3이미지 삭제하고 새로운 이미지 업로드
         if(tradePostRequest.getImage() != null){
@@ -62,8 +64,11 @@ public class TradePostService {
         return modifiedTradePost;
     }
 
-    public void deleteTradePost(Long tradePostId) {
-        // 1. s3 버킷에 있는 이미지 우선 삭제
+    public void deleteTradePost(Long memberId, Long tradePostId) {
+        // 1. 권한 체크
+        checkAccessAndReturnTradePost(memberId, tradePostId);
+
+        // 2. s3 버킷에 있는 이미지 우선 삭제
         TradePost tradePost = tradePostRepository.findById(tradePostId).orElseThrow(TradePostNotFound::new);
         String imageUrl = tradePost.getTradePostImage().getImageUrl();
         tradePostImageService.deleteImageService(imageUrl);
@@ -72,8 +77,12 @@ public class TradePostService {
         tradePostRepository.deleteById(tradePostId);
     }
 
-    public TradePost findTradePostById(Long tradePostId) {
-        return tradePostRepository.findById(tradePostId).orElseThrow(TradePostNotFound::new);
+    public TradePost checkAccessAndReturnTradePost(Long memberId, Long tradePostId){
+        TradePost tradePost = tradePostRepository.findById(tradePostId).orElseThrow(TradePostNotFound::new);
+        if(tradePost.getMember().getId() != memberId){
+            throw new TradePostNotFound();
+        }
+        return tradePost;
     }
 
 }
