@@ -132,9 +132,13 @@ public class MypageService {
         MyPlant myPlant = myPlantRepository.findById(myPlantId)
                 .orElseThrow(() -> new GlobalException(ExceptionCode.MY_PLANT_NOT_FOUND));
 
-        List<LocalDate> wateringDates = calculateNextWateringDates(myPlant, 90);
-        List<LocalDate> repottingDates = calculateNextRepottingDates(myPlant, 365);
-        List<LocalDate> fertilizingDates = calculateNextFertilizingDates(myPlant, 365);
+        Integer waterCycle = myPlant.getPlant().getWaterCycle();
+        Integer repottingCycle = myPlant.getPlant().getRepottingCycle();
+        Integer fertilizingCycle = myPlant.getPlant().getFertilizingCycle();
+
+        List<LocalDate> wateringDates = calculateDates(myPlant, waterCycle, 90);
+        List<LocalDate> repottingDates = calculateDates(myPlant, repottingCycle, 365);
+        List<LocalDate> fertilizingDates = calculateDates(myPlant,fertilizingCycle, 365);
         log.info("wateringDate = {}", wateringDates);// 3개월 정도 커버
 
         return MyPlantResponse.builder()
@@ -147,10 +151,10 @@ public class MypageService {
     }
 
 
-    private List<LocalDate> calculateNextWateringDates(MyPlant myPlant, int daysAhead) {
+    private List<LocalDate> calculateDates(MyPlant myPlant, Integer cycle, int daysAhead) {
         List<LocalDate> result = new ArrayList<>();
 
-        int cycle = myPlant.getPlant().getWaterCycle();
+
         LocalDate nextDate = myPlant.getLastWateredDate().plusDays(cycle);
         LocalDate endDate = LocalDate.now().plusDays(daysAhead);
 
@@ -162,33 +166,5 @@ public class MypageService {
         return result;
     }
 
-    private List<LocalDate> calculateNextRepottingDates(MyPlant myPlant, int daysAhead) {
-        List<LocalDate> result = new ArrayList<>();
 
-        int cycle = myPlant.getPlant().getRepottingCycle();
-        LocalDate nextDate = myPlant.getLastWateredDate().plusDays(cycle);
-        LocalDate endDate = LocalDate.now().plusDays(daysAhead);
-
-        while (!nextDate.isAfter(endDate)) {
-            result.add(nextDate);
-            nextDate = nextDate.plusDays(cycle);
-        }
-
-        return result;
-    }
-
-    private List<LocalDate> calculateNextFertilizingDates(MyPlant myPlant, int daysAhead) {
-        List<LocalDate> result = new ArrayList<>();
-
-        int cycle = myPlant.getPlant().getFertilizingCycle();
-        LocalDate nextDate = myPlant.getLastWateredDate().plusDays(cycle);
-        LocalDate endDate = LocalDate.now().plusDays(daysAhead);
-
-        while (!nextDate.isAfter(endDate)) {
-            result.add(nextDate);
-            nextDate = nextDate.plusDays(cycle);
-        }
-
-        return result;
-    }
 }
