@@ -20,9 +20,9 @@ public class MyPageResponse {
 
     private String profileUrl;
 
-    private List<MyPlantResponse> plants;
+    private List<MyPlantListResponse> plants;
 
-    public static MyPageResponse from(Member member, List<MyPlantResponse> plants) {
+    public static MyPageResponse from(Member member, List<MyPlantListResponse> plants) {
 
         return MyPageResponse.builder()
                 .id(member.getId())

@@ -2,40 +2,43 @@ package org.example.mjuteam4.mypage;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.mjuteam4.global.exception.ExceptionCode;
 import org.example.mjuteam4.global.exception.GlobalException;
 import org.example.mjuteam4.global.uitl.JwtUtil;
-import org.example.mjuteam4.mypage.dto.MyPageResponse;
-import org.example.mjuteam4.mypage.dto.RegisterMyPlantRequest;
-import org.example.mjuteam4.mypage.dto.UpdateMyInfoRequest;
+import org.example.mjuteam4.mypage.dto.*;
 import org.example.mjuteam4.mypage.entity.MyPlant;
 import org.example.mjuteam4.mypage.repository.MyPlantRepository;
-import org.example.mjuteam4.mypage.dto.MyPlantResponse;
 import org.example.mjuteam4.mypage.entity.Member;
 import org.example.mjuteam4.mypage.repository.MemberRepository;
+import org.example.mjuteam4.plant.Plant;
+import org.example.mjuteam4.plant.PlantRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MypageService {
 
     private final JwtUtil jwtUtil;
     private final MemberRepository memberRepository;
     private final MyPlantRepository myPlantRepository;
+    private final PlantRepository plantRepository;
 
     public MyPageResponse getMyPage() {
 
         Member loginMember = jwtUtil.getLoginMember();
 
         List<MyPlant> myPlantList = loginMember.getMyPlantList();
-        List<MyPlantResponse> myPlantResponseList = new ArrayList<>();
+        List<MyPlantListResponse> myPlantResponseList = new ArrayList<>();
 
         for (MyPlant myPlant : myPlantList) {
-            MyPlantResponse myPlantResponse = MyPlantResponse.from(myPlant);
+            MyPlantListResponse myPlantResponse = MyPlantListResponse.from(myPlant);
             myPlantResponseList.add(myPlantResponse);
         }
 
@@ -46,25 +49,32 @@ public class MypageService {
     public void registerMyPlant(RegisterMyPlantRequest request) {
         Member loginMember = jwtUtil.getLoginMember();
 
+        Plant plant = plantRepository.findById(request.getPlantId())
+                .orElseThrow(() -> new GlobalException(ExceptionCode.PLANT_NOT_FOUND));
+
         MyPlant myplant = MyPlant.builder()
                 .member(loginMember)
+                .plant(plant)
                 .name(request.getName())
+                .lastWateredDate(LocalDate.now())
                 .description(request.getDescription())
                 .build();
+
+        loginMember.getMyPlantList().add(myplant);
 
         myPlantRepository.save(myplant);
     }
 
-    public List<MyPlantResponse> getMyPlant() {
+    public List<MyPlantListResponse> getMyPlant() {
 
         Member loginMember = jwtUtil.getLoginMember();
 
         List<MyPlant> myPlantList = loginMember.getMyPlantList();
 
-        List<MyPlantResponse> myPlantResponseList = new ArrayList<>();
+        List<MyPlantListResponse> myPlantResponseList = new ArrayList<>();
 
         for (MyPlant myPlant : myPlantList) {
-            MyPlantResponse myPlantResponse = MyPlantResponse.from(myPlant);
+            MyPlantListResponse myPlantResponse = MyPlantListResponse.from(myPlant);
             myPlantResponseList.add(myPlantResponse);
         }
 
@@ -98,4 +108,63 @@ public class MypageService {
 
         memberRepository.save(loginMember);
     }
+
+    public List<PlantsForRegisterResponse> searchPlantByName(String plantName) {
+
+        List<Plant> allByName = plantRepository.findAllByName(plantName);
+        List<PlantsForRegisterResponse> plantsForRegisterResponseList = new ArrayList<>();
+
+        for (Plant plant : allByName) {
+            PlantsForRegisterResponse plantsForRegisterResponse = PlantsForRegisterResponse.builder()
+                    .id(plant.getId())
+                    .name(plant.getName())
+                    .build();
+
+            plantsForRegisterResponseList.add(plantsForRegisterResponse);
+        }
+
+        return plantsForRegisterResponseList;
+    }
+
+    @Transactional
+    public MyPlantResponse getMyPlantSchedule(Long myPlantId) {
+
+        MyPlant myPlant = myPlantRepository.findById(myPlantId)
+                .orElseThrow(() -> new GlobalException(ExceptionCode.MY_PLANT_NOT_FOUND));
+
+        Integer waterCycle = myPlant.getPlant().getWaterCycle();
+        Integer repottingCycle = myPlant.getPlant().getRepottingCycle();
+        Integer fertilizingCycle = myPlant.getPlant().getFertilizingCycle();
+
+        List<LocalDate> wateringDates = calculateDates(myPlant, waterCycle, 90);
+        List<LocalDate> repottingDates = calculateDates(myPlant, repottingCycle, 365);
+        List<LocalDate> fertilizingDates = calculateDates(myPlant,fertilizingCycle, 365);
+        log.info("wateringDate = {}", wateringDates);// 3개월 정도 커버
+
+        return MyPlantResponse.builder()
+                .plantId(myPlant.getId())
+                .wateringDates(wateringDates)
+                .repottingDates(repottingDates)
+                .fertilizingDates(fertilizingDates)
+                .plantName(myPlant.getName())
+                .build();
+    }
+
+
+    private List<LocalDate> calculateDates(MyPlant myPlant, Integer cycle, int daysAhead) {
+        List<LocalDate> result = new ArrayList<>();
+
+
+        LocalDate nextDate = myPlant.getLastWateredDate().plusDays(cycle);
+        LocalDate endDate = LocalDate.now().plusDays(daysAhead);
+
+        while (!nextDate.isAfter(endDate)) {
+            result.add(nextDate);
+            nextDate = nextDate.plusDays(cycle);
+        }
+
+        return result;
+    }
+
+
 }

@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.example.mjuteam4.plant.Plant;
+
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -17,13 +20,20 @@ public class MyPlant {
 
     private String description;
 
+    private LocalDate lastWateredDate;
+
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Plant plant;
+
     @Builder
-    public MyPlant(String name, String description, Member member) {
+    public MyPlant(String name, String description, LocalDate lastWateredDate, Member member, Plant plant) {
         this.name = name;
         this.description = description;
+        this.lastWateredDate = lastWateredDate;
         this.member = member;
+        this.plant = plant;
     }
 }

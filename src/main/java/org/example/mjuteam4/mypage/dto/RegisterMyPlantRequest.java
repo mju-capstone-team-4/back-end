@@ -10,4 +10,6 @@ public class RegisterMyPlantRequest {
     private String name;
 
     private String description;
+
+    private Long plantId;
 }
