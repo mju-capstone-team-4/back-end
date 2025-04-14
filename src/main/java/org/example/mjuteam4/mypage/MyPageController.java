@@ -52,7 +52,7 @@ public class MyPageController {
 
     // 내 식물 조회
     @GetMapping("/myplant")
-    public ResponseEntity<List<MyPlantResponse>> getMyPlant() {
+    public ResponseEntity<List<MyPlantListResponse>> getMyPlant() {
         return ResponseEntity.ok().body(mypageService.getMyPlant());
     }
 

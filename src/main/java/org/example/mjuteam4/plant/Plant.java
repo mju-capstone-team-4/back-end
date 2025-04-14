@@ -16,5 +16,9 @@ public class Plant {
 
     private String description;
 
-    private int waterCyclingDays;
+    private Integer waterCycle;
+
+    private Integer repottingCycle;
+
+    private Integer fertilizingCycle;
 }

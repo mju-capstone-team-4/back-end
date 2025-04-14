@@ -29,10 +29,11 @@ public class MyPlant {
     private Plant plant;
 
     @Builder
-    public MyPlant(String name, String description, Member member, Plant plant) {
+    public MyPlant(String name, String description, LocalDate lastWateredDate, Member member, Plant plant) {
         this.name = name;
         this.description = description;
-        this.plant = plant;
+        this.lastWateredDate = lastWateredDate;
         this.member = member;
+        this.plant = plant;
     }
 }

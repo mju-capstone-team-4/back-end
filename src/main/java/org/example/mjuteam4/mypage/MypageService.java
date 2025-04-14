@@ -2,6 +2,7 @@ package org.example.mjuteam4.mypage;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.mjuteam4.global.exception.ExceptionCode;
 import org.example.mjuteam4.global.exception.GlobalException;
 import org.example.mjuteam4.global.uitl.JwtUtil;
@@ -21,6 +22,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MypageService {
 
     private final JwtUtil jwtUtil;
@@ -54,6 +56,7 @@ public class MypageService {
                 .member(loginMember)
                 .plant(plant)
                 .name(request.getName())
+                .lastWateredDate(LocalDate.now())
                 .description(request.getDescription())
                 .build();
 
@@ -123,26 +126,63 @@ public class MypageService {
         return plantsForRegisterResponseList;
     }
 
+    @Transactional
     public MyPlantResponse getMyPlantSchedule(Long myPlantId) {
 
         MyPlant myPlant = myPlantRepository.findById(myPlantId)
                 .orElseThrow(() -> new GlobalException(ExceptionCode.MY_PLANT_NOT_FOUND));
 
-        List<LocalDate> wateringDates = calculateNextWateringDates(myPlant, 60); // 2개월 정도 커버
+        List<LocalDate> wateringDates = calculateNextWateringDates(myPlant, 90);
+        List<LocalDate> repottingDates = calculateNextRepottingDates(myPlant, 365);
+        List<LocalDate> fertilizingDates = calculateNextFertilizingDates(myPlant, 365);
+        log.info("wateringDate = {}", wateringDates);// 3개월 정도 커버
 
         return MyPlantResponse.builder()
                 .plantId(myPlant.getId())
                 .wateringDates(wateringDates)
+                .repottingDates(repottingDates)
+                .fertilizingDates(fertilizingDates)
                 .plantName(myPlant.getName())
                 .build();
     }
 
+
     private List<LocalDate> calculateNextWateringDates(MyPlant myPlant, int daysAhead) {
         List<LocalDate> result = new ArrayList<>();
 
-        int cycle = myPlant.getPlant().getWaterCyclingDays(); // 항상 Plant에 저장된 주기 사용
-        LocalDate nextDate = myPlant.getLastWateredDate().plusDays(cycle); // 마지막 물준날짜 + 주기
-        LocalDate endDate = LocalDate.now().plusDays(daysAhead); // 오늘부터 daysAhead(60일) 후까지 커버
+        int cycle = myPlant.getPlant().getWaterCycle();
+        LocalDate nextDate = myPlant.getLastWateredDate().plusDays(cycle);
+        LocalDate endDate = LocalDate.now().plusDays(daysAhead);
+
+        while (!nextDate.isAfter(endDate)) {
+            result.add(nextDate);
+            nextDate = nextDate.plusDays(cycle);
+        }
+
+        return result;
+    }
+
+    private List<LocalDate> calculateNextRepottingDates(MyPlant myPlant, int daysAhead) {
+        List<LocalDate> result = new ArrayList<>();
+
+        int cycle = myPlant.getPlant().getRepottingCycle();
+        LocalDate nextDate = myPlant.getLastWateredDate().plusDays(cycle);
+        LocalDate endDate = LocalDate.now().plusDays(daysAhead);
+
+        while (!nextDate.isAfter(endDate)) {
+            result.add(nextDate);
+            nextDate = nextDate.plusDays(cycle);
+        }
+
+        return result;
+    }
+
+    private List<LocalDate> calculateNextFertilizingDates(MyPlant myPlant, int daysAhead) {
+        List<LocalDate> result = new ArrayList<>();
+
+        int cycle = myPlant.getPlant().getFertilizingCycle();
+        LocalDate nextDate = myPlant.getLastWateredDate().plusDays(cycle);
+        LocalDate endDate = LocalDate.now().plusDays(daysAhead);
 
         while (!nextDate.isAfter(endDate)) {
             result.add(nextDate);

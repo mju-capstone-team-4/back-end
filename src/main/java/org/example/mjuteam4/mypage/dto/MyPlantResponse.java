@@ -18,4 +18,9 @@ public class MyPlantResponse {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private List<LocalDate> wateringDates;
+
+    private List<LocalDate> repottingDates;
+
+    private List<LocalDate> fertilizingDates;
+
 }
