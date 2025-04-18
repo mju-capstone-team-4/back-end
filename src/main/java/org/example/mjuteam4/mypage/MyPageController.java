@@ -46,8 +46,8 @@ public class MyPageController {
 
     // 내 식물 등록
     @PostMapping("/myplant")
-    public ResponseEntity<ResultResponse> registerMyPlant(@RequestBody RegisterMyPlantRequest registerMyPlantRequest,
-                                                          @RequestParam("file") MultipartFile file) {
+    public ResponseEntity<ResultResponse> registerMyPlant(@RequestPart("data") RegisterMyPlantRequest registerMyPlantRequest,
+                                                          @RequestPart("file") MultipartFile file) {
         mypageService.registerMyPlant(registerMyPlantRequest, file);
         return ResponseEntity.ok().body(ResultResponse.of(ResultCode.REGISTER_MYPLANT_SUCCESS));
     }
@@ -67,7 +67,7 @@ public class MyPageController {
 
     // 식물 등록을 위한 식물 이름 검색
     @GetMapping("plants")
-    public ResponseEntity<List<PlantsForRegisterResponse>> searchPlantByName(@RequestBody String plantName) {
+    public ResponseEntity<List<PlantsForRegisterResponse>> searchPlantByName(@RequestParam String plantName) {
         return ResponseEntity.ok().body(mypageService.searchPlantByName(plantName));
     }
 
