@@ -118,7 +118,7 @@ public class MypageService {
 
     public List<PlantsForRegisterResponse> searchPlantByName(String plantName) {
 
-        List<Plant> allByName = plantRepository.findAllByName(plantName);
+        List<Plant> allByName = plantRepository.findByNameContaining(plantName);
         List<PlantsForRegisterResponse> plantsForRegisterResponseList = new ArrayList<>();
 
         for (Plant plant : allByName) {
