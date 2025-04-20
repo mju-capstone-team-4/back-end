@@ -13,7 +13,9 @@ import org.example.mjuteam4.mypage.entity.Member;
 import org.example.mjuteam4.mypage.repository.MemberRepository;
 import org.example.mjuteam4.plant.Plant;
 import org.example.mjuteam4.plant.PlantRepository;
+import org.example.mjuteam4.storage.StorageService;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -29,6 +31,7 @@ public class MypageService {
     private final MemberRepository memberRepository;
     private final MyPlantRepository myPlantRepository;
     private final PlantRepository plantRepository;
+    private final StorageService storageService;
 
     public MyPageResponse getMyPage() {
 
@@ -46,11 +49,13 @@ public class MypageService {
     }
 
     @Transactional
-    public void registerMyPlant(RegisterMyPlantRequest request) {
+    public void registerMyPlant(RegisterMyPlantRequest request, MultipartFile file) {
         Member loginMember = jwtUtil.getLoginMember();
 
         Plant plant = plantRepository.findById(request.getPlantId())
                 .orElseThrow(() -> new GlobalException(ExceptionCode.PLANT_NOT_FOUND));
+
+        String imageUrl = storageService.uploadFile(file, "myplant", loginMember.getId());
 
         MyPlant myplant = MyPlant.builder()
                 .member(loginMember)
@@ -58,6 +63,8 @@ public class MypageService {
                 .name(request.getName())
                 .lastWateredDate(LocalDate.now())
                 .description(request.getDescription())
+                .imageUrl(imageUrl)
+                .recommendTonic(request.isRecommendTonic())
                 .build();
 
         loginMember.getMyPlantList().add(myplant);
@@ -111,7 +118,7 @@ public class MypageService {
 
     public List<PlantsForRegisterResponse> searchPlantByName(String plantName) {
 
-        List<Plant> allByName = plantRepository.findAllByName(plantName);
+        List<Plant> allByName = plantRepository.findByNameContaining(plantName);
         List<PlantsForRegisterResponse> plantsForRegisterResponseList = new ArrayList<>();
 
         for (Plant plant : allByName) {

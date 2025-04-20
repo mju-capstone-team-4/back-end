@@ -7,6 +7,7 @@ import org.example.mjuteam4.mypage.dto.*;
 import org.example.mjuteam4.security.provider.TokenProvider;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -45,8 +46,9 @@ public class MyPageController {
 
     // 내 식물 등록
     @PostMapping("/myplant")
-    public ResponseEntity<ResultResponse> registerMyPlant(@RequestBody RegisterMyPlantRequest registerMyPlantRequest) {
-        mypageService.registerMyPlant(registerMyPlantRequest);
+    public ResponseEntity<ResultResponse> registerMyPlant(@RequestPart("data") RegisterMyPlantRequest registerMyPlantRequest,
+                                                          @RequestPart("file") MultipartFile file) {
+        mypageService.registerMyPlant(registerMyPlantRequest, file);
         return ResponseEntity.ok().body(ResultResponse.of(ResultCode.REGISTER_MYPLANT_SUCCESS));
     }
 
@@ -63,11 +65,13 @@ public class MyPageController {
         return ResponseEntity.ok().body(ResultResponse.of(ResultCode.DELETE_MYPLANT_SUCCESS));
     }
 
+    // 식물 등록을 위한 식물 이름 검색
     @GetMapping("plants")
-    public ResponseEntity<List<PlantsForRegisterResponse>> searchPlantByName(@RequestBody String plantName) {
+    public ResponseEntity<List<PlantsForRegisterResponse>> searchPlantByName(@RequestParam String plantName) {
         return ResponseEntity.ok().body(mypageService.searchPlantByName(plantName));
     }
 
+    // 특정 내 식물 달력 조회
     @GetMapping("/myplant/{myPlantId}")
     public ResponseEntity<MyPlantResponse> getMyPlantSchedule(@PathVariable Long myPlantId) {
         return ResponseEntity.ok().body(mypageService.getMyPlantSchedule(myPlantId));
