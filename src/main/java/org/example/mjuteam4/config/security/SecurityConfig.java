@@ -51,6 +51,7 @@ public class SecurityConfig {
                     CorsConfiguration config = new CorsConfiguration();
 
                     config.addAllowedOriginPattern("http://localhost:3000"); // 로컬 개발 환경
+                    config.addAllowedOriginPattern("http://localhost:8081"); // 로컬 개발 환경
 
                     config.addAllowedMethod("*"); // 모든 HTTP 메서드 허용
                     config.addAllowedHeader("*"); // 모든 헤더 허용
