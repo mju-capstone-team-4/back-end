@@ -39,7 +39,11 @@ public enum ExceptionCode {
 
     //plant
     PLANT_NOT_FOUND(404, "PLANT_NOT_FOUND", "해당 ID를 가진 식물이 없습니다"),
+
+    //chant
+    UNAUTHORIZED_CHAT_ACCESS(403, "UNAUTHORIZED_CHAT_ACCESS", "채팅 기능은 인증이 필요합니다")
     ;
+
 
 
 
