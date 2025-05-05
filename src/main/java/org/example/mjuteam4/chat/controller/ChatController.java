@@ -1,6 +1,7 @@
 package org.example.mjuteam4.chat.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.example.mjuteam4.chat.dto.ChatMessageDto;
 import org.example.mjuteam4.chat.dto.ChatRoomListResponseDto;
 import org.example.mjuteam4.chat.service.ChatService;
 import org.springframework.http.HttpStatus;
@@ -34,5 +35,12 @@ public class ChatController {
     public ResponseEntity<?> joinGroupChatRoom(@PathVariable Long roomId){
         chatService.addParticipantToGroupChat(roomId);
         return ResponseEntity.ok().build();
+    }
+
+    // 이전 메시지 조회
+    @GetMapping("/history/{roomId}")
+    public ResponseEntity<?> getChatHistory(@PathVariable Long roomId){
+        List<ChatMessageDto> chatMessageDtos = chatService.getChatHistory(roomId);
+        return new ResponseEntity<>(chatMessageDtos, HttpStatus.OK);
     }
 }

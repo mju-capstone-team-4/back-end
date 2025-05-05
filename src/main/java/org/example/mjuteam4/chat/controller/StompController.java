@@ -2,7 +2,7 @@ package org.example.mjuteam4.chat.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.mjuteam4.chat.dto.ChatMessageReqDto;
+import org.example.mjuteam4.chat.dto.ChatMessageDto;
 import org.example.mjuteam4.chat.service.ChatService;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -17,9 +17,9 @@ public class StompController {
     private final ChatService chatService;
 
     @MessageMapping("/{roomId}")
-    public void sendMessage(@DestinationVariable Long roomId, ChatMessageReqDto chatMessageReqDto) {
-        log.debug("chatMessageReqDto.getMessage(): " + chatMessageReqDto.getMessage());
-        chatService.saveMessage(roomId, chatMessageReqDto);
-        messageTemplate.convertAndSend("/topic/"+roomId, chatMessageReqDto);
+    public void sendMessage(@DestinationVariable Long roomId, ChatMessageDto chatMessageDto) {
+        log.debug("chatMessageReqDto.getMessage(): " + chatMessageDto.getMessage());
+        chatService.saveMessage(roomId, chatMessageDto);
+        messageTemplate.convertAndSend("/topic/"+roomId, chatMessageDto);
     }
 }
