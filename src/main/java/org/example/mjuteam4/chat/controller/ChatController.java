@@ -3,6 +3,7 @@ package org.example.mjuteam4.chat.controller;
 import lombok.RequiredArgsConstructor;
 import org.example.mjuteam4.chat.dto.ChatMessageDto;
 import org.example.mjuteam4.chat.dto.ChatRoomListResponseDto;
+import org.example.mjuteam4.chat.dto.MyChatListResponseDto;
 import org.example.mjuteam4.chat.service.ChatService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,5 +43,26 @@ public class ChatController {
     public ResponseEntity<?> getChatHistory(@PathVariable Long roomId){
         List<ChatMessageDto> chatMessageDtos = chatService.getChatHistory(roomId);
         return new ResponseEntity<>(chatMessageDtos, HttpStatus.OK);
+    }
+
+    //    채팅메시지 읽음처리
+    @PostMapping("/room/{roomId}/read")
+    public ResponseEntity<?> messageRead(@PathVariable Long roomId){
+        chatService.messageRead(roomId);
+        return ResponseEntity.ok().build();
+    }
+
+    //    내채팅방목록조회 : roomId, roomName, 그룹채팅여부, 메시지읽음개수
+    @GetMapping("/my/rooms")
+    public ResponseEntity<?> getMyChatRooms(){
+        List<MyChatListResponseDto> myChatListResDtos = chatService.getMyChatRooms();
+        return new ResponseEntity<>(myChatListResDtos, HttpStatus.OK);
+    }
+
+    //    채팅방 나가기
+    @DeleteMapping("/room/group/{roomId}/leave")
+    public ResponseEntity<?> leaveGroupChatRoom(@PathVariable Long roomId){
+        chatService.leaveGroupChatRoom(roomId);
+        return ResponseEntity.ok().build();
     }
 }
