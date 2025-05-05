@@ -6,16 +6,22 @@ import org.example.mjuteam4.chat.domain.ChatParticipant;
 import org.example.mjuteam4.chat.domain.ChatRoom;
 import org.example.mjuteam4.chat.domain.ReadStatus;
 import org.example.mjuteam4.chat.dto.ChatMessageReqDto;
+import org.example.mjuteam4.chat.dto.ChatRoomListResponseDto;
 import org.example.mjuteam4.chat.repository.ChatMessageRepository;
 import org.example.mjuteam4.chat.repository.ChatParticipantRepository;
 import org.example.mjuteam4.chat.repository.ChatRoomRepository;
 import org.example.mjuteam4.chat.repository.ReadStatusRepository;
+import org.example.mjuteam4.global.uitl.JwtUtil;
 import org.example.mjuteam4.mypage.entity.Member;
+import org.example.mjuteam4.mypage.exception.MemberNotFoundException;
 import org.example.mjuteam4.mypage.repository.MemberRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -26,6 +32,7 @@ public class ChatService {
     private final ChatMessageRepository chatMessageRepository;
     private final ReadStatusRepository readStatusRepository;
     private final MemberRepository memberRepository;
+    private final JwtUtil jwtUtil;
 
     public void saveMessage(Long roomId, ChatMessageReqDto chatMessageReqDto) {
         //1. 채팅방 조회
@@ -54,6 +61,70 @@ public class ChatService {
             readStatusRepository.save(readStatus);
         }
 
+    }
+
+    public void createGroupRoom(String chatRoomName){
+
+        //동명이인?
+        Member member = memberRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName())
+                .orElseThrow(() -> new MemberNotFoundException());
+
+        // 채팅방 생성
+        ChatRoom chatRoom = ChatRoom.builder()
+                .name(chatRoomName)
+                .isGroupChat("Y")
+                .build();
+        chatRoomRepository.save(chatRoom);
+
+        // 채팅참여자로 개설자를 추가
+        ChatParticipant chatParticipant = ChatParticipant.builder()
+                .chatRoom(chatRoom)
+                .member(member)
+                .build();
+
+        chatParticipantRepository.save(chatParticipant);
+
+    }
+
+    public List<ChatRoomListResponseDto> getGroupchatRooms(){
+        List<ChatRoom> chatRooms = chatRoomRepository.findByIsGroupChat("Y");
+        List<ChatRoomListResponseDto> dtos = new ArrayList<>();
+        for(ChatRoom c : chatRooms){
+            ChatRoomListResponseDto dto = ChatRoomListResponseDto
+                    .builder()
+                    .roomId(c.getId())
+                    .roomName(c.getName())
+                    .build();
+            dtos.add(dto);
+        }
+        return dtos;
+    }
+
+    public void addParticipantToGroupChat(Long roomId){
+        // 채팅방조회
+        ChatRoom chatRoom = chatRoomRepository.findById(roomId).orElseThrow(()-> new RuntimeException("room cannot be found"));
+
+        // member조회
+        Member member = memberRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(()->new RuntimeException("member cannot be found"));
+        if(chatRoom.getIsGroupChat().equals("N")){
+            throw new IllegalArgumentException("그룹채팅이 아닙니다.");
+        }
+
+        // 이미 참여자인지 검증
+        Optional<ChatParticipant> participant = chatParticipantRepository.findByChatRoomAndMember(chatRoom, member);
+        
+        if(!participant.isPresent()){
+            addParticipantToRoom(chatRoom, member);
+        }
+    }
+
+    // ChatParticipant객체생성 후 저장
+    public void addParticipantToRoom(ChatRoom chatRoom, Member member){
+        ChatParticipant chatParticipant = ChatParticipant.builder()
+                .chatRoom(chatRoom)
+                .member(member)
+                .build();
+        chatParticipantRepository.save(chatParticipant);
     }
 
 }
