@@ -16,11 +16,14 @@ import java.util.List;
 @Builder
 @Getter
 public class ChatRoom  extends BaseTimeEntity {
+
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(nullable = false)
     private String name;
-    @Builder.Default
+
+    @Builder.Default // 빌더 패턴에서 기본값을 적용해줌
     private String isGroupChat="N";
 
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.REMOVE)
