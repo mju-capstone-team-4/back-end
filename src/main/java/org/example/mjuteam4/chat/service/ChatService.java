@@ -69,60 +69,6 @@ public class ChatService {
 
     }
 
-    public void createGroupRoom(String chatRoomName){
-
-        // 로그인 유저
-        Member member = jwtUtil.getLoginMember();
-
-        // 채팅방 생성
-        ChatRoom chatRoom = ChatRoom.builder()
-                .name(chatRoomName)
-                .isGroupChat("Y")
-                .build();
-        chatRoomRepository.save(chatRoom);
-
-        // 채팅참여자로 개설자를 추가
-        ChatParticipant chatParticipant = ChatParticipant.builder()
-                .chatRoom(chatRoom)
-                .member(member)
-                .build();
-
-        chatParticipantRepository.save(chatParticipant);
-
-    }
-
-    public List<ChatRoomListResponseDto> getGroupchatRooms(){
-        List<ChatRoom> chatRooms = chatRoomRepository.findByIsGroupChat("Y");
-        List<ChatRoomListResponseDto> dtos = new ArrayList<>();
-        for(ChatRoom c : chatRooms){
-            ChatRoomListResponseDto dto = ChatRoomListResponseDto
-                    .builder()
-                    .roomId(c.getId())
-                    .roomName(c.getName())
-                    .build();
-            dtos.add(dto);
-        }
-        return dtos;
-    }
-
-    public void addParticipantToGroupChat(Long roomId){
-        // 채팅방조회
-        ChatRoom chatRoom = chatRoomRepository.findById(roomId).orElseThrow(ChatRoomNotFound::new);
-
-        // member조회
-        Member member = jwtUtil.getLoginMember();
-
-        if(chatRoom.getIsGroupChat().equals("N")){
-            throw new IllegalArgumentException("그룹채팅이 아닙니다.");
-        }
-
-        // 이미 참여자인지 검증
-        Optional<ChatParticipant> participant = chatParticipantRepository.findByChatRoomAndMember(chatRoom, member);
-
-        if(!participant.isPresent()){
-            addParticipantToRoom(chatRoom, member);
-        }
-    }
 
     // ChatParticipant객체생성 후 저장
     public void addParticipantToRoom(ChatRoom chatRoom, Member member){
@@ -173,16 +119,6 @@ public class ChatService {
         return false;
     }
 
-    public void messageRead(Long roomId){
-        ChatRoom chatRoom = chatRoomRepository.findById(roomId).orElseThrow(ChatRoomNotFound::new);
-        Member member = jwtUtil.getLoginMember();
-
-        List<ReadStatus> readStatuses = readStatusRepository.findByChatRoomAndMember(chatRoom, member);
-        for(ReadStatus r : readStatuses){
-            r.updateIsRead(true);
-        }
-    }
-
     public List<MyChatListResponseDto> getMyChatRooms(){
         Member member = jwtUtil.getLoginMember();
 
@@ -199,24 +135,6 @@ public class ChatService {
             chatListResDtos.add(dto);
         }
         return chatListResDtos;
-    }
-
-
-    public void leaveGroupChatRoom(Long roomId){
-        ChatRoom chatRoom = chatRoomRepository.findById(roomId).orElseThrow(ChatRoomNotFound::new);
-        Member member = jwtUtil.getLoginMember();
-
-        if(chatRoom.getIsGroupChat().equals("N")){
-            throw new IllegalArgumentException("단체 채팅방이 아닙니다.");
-        }
-
-        ChatParticipant c = chatParticipantRepository.findByChatRoomAndMember(chatRoom, member).orElseThrow(ChatParticipantNotFound::new);
-        chatParticipantRepository.delete(c);
-
-        List<ChatParticipant> chatParticipants = chatParticipantRepository.findByChatRoom(chatRoom);
-        if(chatParticipants.isEmpty()){
-            chatRoomRepository.delete(chatRoom);
-        }
     }
 
     public Long getOrCreatePrivateRoom(Long otherMemberId){
