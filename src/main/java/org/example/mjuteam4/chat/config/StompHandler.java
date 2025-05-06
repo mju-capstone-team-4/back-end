@@ -1,6 +1,7 @@
 package org.example.mjuteam4.chat.config;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.mjuteam4.chat.exception.UnauthorizedChatAccess;
 import org.example.mjuteam4.chat.service.ChatService;
 import org.example.mjuteam4.security.provider.TokenProvider;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class StompHandler implements ChannelInterceptor {
 
     private final TokenProvider tokenProvider;
@@ -25,29 +27,33 @@ public class StompHandler implements ChannelInterceptor {
         final StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
 
         if(StompCommand.CONNECT == accessor.getCommand()){
-            System.out.println("connect요청시 토큰 유효성 검증");
+            log.info("🔐 WebSocket CONNECT: Checking token validity...");
             String bearerToken = accessor.getFirstNativeHeader("Authorization");
             String token = bearerToken.substring(7);
 
             //토큰 검증
             Authentication authentication = tokenProvider.getAuthentication(token);
             if(authentication == null) {
+                log.warn("❌ Invalid token during WebSocket CONNECT.");
                 throw new UnauthorizedChatAccess();
             }
-            System.out.println("토큰 검증 완료");
+            log.info("✅ Token verified successfully for CONNECT.");
         }
 
         if(StompCommand.SUBSCRIBE == accessor.getCommand()){
-            System.out.println("subscribe 검증");
+            log.info("📥 WebSocket SUBSCRIBE: Verifying token and room access...");
             String bearerToken = accessor.getFirstNativeHeader("Authorization");
             String token = bearerToken.substring(7);
             Authentication authentication = tokenProvider.getAuthentication(token);
             if(authentication == null) {
+                log.warn("❌ Invalid token during SUBSCRIBE.");
                 throw new UnauthorizedChatAccess();
             }
-            String email = authentication.getName();
+            String name = authentication.getName();
             String roomId = accessor.getDestination().split("/")[2];
-            if(!chatService.isRoomPaticipant(email, Long.parseLong(roomId))){
+            log.info("🔍 SUBSCRIBE request by user '{}' for room '{}'", name, roomId);
+            if(!chatService.isRoomParticipant(name, Long.parseLong(roomId))){
+                log.warn("🚫 Access denied: User '{}' is not a participant of room '{}'", name, roomId);
                 throw new RuntimeException("해당 room에 권한이 없습니다.");
             }
         }

@@ -1,5 +1,6 @@
 package org.example.mjuteam4.chat.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Component;
@@ -10,6 +11,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
+@Slf4j
 public class StompEventListener {
     private final Set<String> sessions = ConcurrentHashMap.newKeySet();
 
@@ -17,15 +19,15 @@ public class StompEventListener {
     public void connectHandle(SessionConnectEvent event){
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
         sessions.add(accessor.getSessionId());
-        System.out.println("connect sessiond ID" + accessor.getSessionId());
-        System.out.println("total session : " + sessions.size());
+        log.info("🔌 WebSocket CONNECT - sessionId: {}", accessor.getSessionId());
+        log.info("📊 Total sessions after connect: {}", sessions.size());
     }
 
     @EventListener
     public void disconnectHandle(SessionDisconnectEvent event){
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
         sessions.remove(accessor.getSessionId());
-        System.out.println("disconnect sessiond ID" + accessor.getSessionId());
-        System.out.println("total session : " + sessions.size());
+        log.info("❌ WebSocket DISCONNECT - sessionId: {}", accessor.getSessionId());
+        log.info("📉 Total sessions after disconnect: {}", sessions.size());
     }
 }
