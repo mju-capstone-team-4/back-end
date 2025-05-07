@@ -17,7 +17,7 @@ public class ChatBotController {
 
     private final ChatBotService chatBotService;
 
-    @GetMapping("/ask")
+    @PostMapping("/ask")
     public CompletableFuture<ResponseEntity<ChatBotResponseDto>> getResponse(@RequestBody ChatBotRequestDto chatBotRequestDto){
         return chatBotService.chatJson(chatBotRequestDto).thenApply(response -> {
             return ResponseEntity.ok(response);
