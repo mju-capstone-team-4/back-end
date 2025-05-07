@@ -2,7 +2,6 @@ package org.example.mjuteam4.chat.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.mjuteam4.chat.dto.ChatMessageDto;
-import org.example.mjuteam4.chat.dto.ChatRoomListResponseDto;
 import org.example.mjuteam4.chat.dto.MyChatListResponseDto;
 import org.example.mjuteam4.chat.service.ChatService;
 import org.springframework.http.HttpStatus;

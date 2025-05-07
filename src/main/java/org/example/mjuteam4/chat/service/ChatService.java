@@ -1,6 +1,5 @@
 package org.example.mjuteam4.chat.service;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.mjuteam4.chat.domain.ChatMessage;
@@ -8,9 +7,7 @@ import org.example.mjuteam4.chat.domain.ChatParticipant;
 import org.example.mjuteam4.chat.domain.ChatRoom;
 import org.example.mjuteam4.chat.domain.ReadStatus;
 import org.example.mjuteam4.chat.dto.ChatMessageDto;
-import org.example.mjuteam4.chat.dto.ChatRoomListResponseDto;
 import org.example.mjuteam4.chat.dto.MyChatListResponseDto;
-import org.example.mjuteam4.chat.exception.ChatParticipantNotFound;
 import org.example.mjuteam4.chat.exception.ChatRoomNotFound;
 import org.example.mjuteam4.chat.repository.ChatMessageRepository;
 import org.example.mjuteam4.chat.repository.ChatParticipantRepository;
@@ -20,7 +17,6 @@ import org.example.mjuteam4.global.uitl.JwtUtil;
 import org.example.mjuteam4.mypage.entity.Member;
 import org.example.mjuteam4.mypage.exception.MemberNotFoundException;
 import org.example.mjuteam4.mypage.repository.MemberRepository;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -139,8 +135,9 @@ public class ChatService {
 
     public Long getOrCreatePrivateRoom(Long otherMemberId){
         Member member = jwtUtil.getLoginMember();
+        log.debug("chat member: " + member);
         Member otherMember = memberRepository.findById(otherMemberId).orElseThrow(MemberNotFoundException::new);
-
+        log.debug("chat other member: " + otherMember);
         // 나와 상대방이 1:1채팅에 이미 참석하고 있다면 해당 roomId return
         Optional<ChatRoom> chatRoom = chatParticipantRepository.findExistingPrivateRoom(member.getId(), otherMember.getId());
         if(chatRoom.isPresent()){

@@ -1,25 +1,49 @@
 package org.example.mjuteam4.chat.config;
 
 import lombok.RequiredArgsConstructor;
+import org.example.mjuteam4.chat.config.interceptor.AuthHandshakeInterceptor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import org.springframework.web.socket.server.HandshakeHandler;
+import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
+
+import java.security.Principal;
+import java.util.Map;
 
 @Configuration
 @EnableWebSocketMessageBroker
 @RequiredArgsConstructor
 public class StompWebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private final StompHandler stompHandler;
+    private final AuthHandshakeInterceptor authHandshakeInterceptor;
+
+    @Bean
+    public HandshakeHandler handshakeHandler() {
+        return new DefaultHandshakeHandler() {
+            @Override
+            protected Principal determineUser(ServerHttpRequest request,
+                                              WebSocketHandler wsHandler,
+                                              Map<String, Object> attributes) {
+                return (Principal) attributes.get("principal");
+            }
+        };
+    }
+
 
     // 웹소켓 연결을 위한 엔드포인트 /connect 등록
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/connect")
-                .setAllowedOrigins("http://localhost:3000");
-                //..withSockJS(); // ws:가 아닌 http: 엔드포인트를 사용할수 있게 해주는 sockJs라이브러리를 통한 요청을 허용하는 설정.
+                .setAllowedOrigins("http://localhost:3000")
+                .addInterceptors(authHandshakeInterceptor) // 인증
+                .setHandshakeHandler(handshakeHandler());
     }
 
     // STOMP 메시지 전송 경로(/publish) 및 구독 경로(/topic) 설정
