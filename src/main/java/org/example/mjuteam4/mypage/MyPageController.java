@@ -4,7 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.example.mjuteam4.global.result.ResultCode;
 import org.example.mjuteam4.global.result.ResultResponse;
 import org.example.mjuteam4.mypage.dto.*;
+import org.example.mjuteam4.mypage.entity.Member;
 import org.example.mjuteam4.security.provider.TokenProvider;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,6 +26,16 @@ public class MyPageController {
     @GetMapping("token")
     public ResponseEntity<String> me() {
         return ResponseEntity.ok().body(tokenProvider.getTestToken("anonymous"));
+    }
+
+    @GetMapping("/members")
+    public ResponseEntity<Page<MemberResponse>> getMember(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<MemberResponse> memberList = mypageService.getMemberList(pageable);
+        return ResponseEntity.ok().body(memberList);
     }
 
     // 마이페이지 조회

@@ -13,7 +13,10 @@ import org.example.mjuteam4.mypage.entity.Member;
 import org.example.mjuteam4.mypage.repository.MemberRepository;
 import org.example.mjuteam4.plant.Plant;
 import org.example.mjuteam4.plant.PlantRepository;
+import org.example.mjuteam4.question.dto.response.QuestionResponse;
 import org.example.mjuteam4.storage.StorageService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,6 +35,12 @@ public class MypageService {
     private final MyPlantRepository myPlantRepository;
     private final PlantRepository plantRepository;
     private final StorageService storageService;
+
+
+    public Page<MemberResponse> getMemberList(Pageable pageable){
+        Page<Member> members = memberRepository.findAll(pageable);
+        return members.map(MemberResponse::create);
+    }
 
     public MyPageResponse getMyPage() {
 
