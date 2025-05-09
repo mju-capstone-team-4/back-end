@@ -2,12 +2,18 @@ package org.example.mjuteam4.tradePost.dto.response;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.example.mjuteam4.mypage.entity.Member;
 import org.example.mjuteam4.tradePost.entity.TradePost;
 import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @NoArgsConstructor
 public class TradePostResponse {
+    // Member
+    private Long memberId;
+    private String username;
+
+    // TradePost
     private Long tradePostId;
     private String itemName;
     private Long price;
@@ -15,6 +21,10 @@ public class TradePostResponse {
     private String imageUrl;
 
     private TradePostResponse(TradePost tradePost){
+        Member member = tradePost.getMember();
+        this.memberId = member.getId();
+        this.username = member.getUsername();
+        
         this.tradePostId = tradePost.getId();
         this.itemName = tradePost.getItemName();
         this.price = tradePost.getPrice();
