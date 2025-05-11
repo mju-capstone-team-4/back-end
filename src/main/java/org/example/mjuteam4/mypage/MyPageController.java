@@ -23,9 +23,9 @@ public class MyPageController {
     private final MypageService mypageService;
     private final TokenProvider tokenProvider;
 
-    @GetMapping("token")
-    public ResponseEntity<String> me() {
-        return ResponseEntity.ok().body(tokenProvider.getTestToken("anonymous"));
+    @PostMapping("token")
+    public ResponseEntity<String> me(@RequestBody String username) {
+        return ResponseEntity.ok().body(tokenProvider.getTestToken(username));
     }
 
     @GetMapping("/members")
