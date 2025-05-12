@@ -45,4 +45,24 @@ public class PlantService {
     }
 
 
+    public String searchOne(String q1) {
+        String baseUrl = "http://openapi.nature.go.kr/openapi/service/rest/PlantService/plntIlstrInfo";
+
+        String uri = UriComponentsBuilder.fromHttpUrl(baseUrl)
+                .queryParam("serviceKey", serviceKey)
+                .queryParam("q1", q1)                 // 1: 국명 기준
+                .build(false)                         // 인코딩 비활성화 (이미 인코딩된 serviceKey 고려)
+                .toUriString();
+
+        try {
+            ResponseEntity<String> response = restTemplate.getForEntity(uri, String.class);
+            log.info("status = {}", response.getStatusCode());
+            log.info("body = {}", response.getBody());
+            return response.getBody();
+        } catch (Exception e) {
+            log.error("API 호출 실패", e);
+            throw e;
+        }
+
+    }
 }
