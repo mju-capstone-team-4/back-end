@@ -33,4 +33,10 @@ public class PlantController {
 //        return ResponseEntity.ok().body("save completed");
 //    }
 
+    @GetMapping("/save-all")
+    public String saveAllPlants() {
+        plantService.fetchAndSaveAllPlants();
+        return "✅ 전체 저장 요청 완료";
+    }
+
 }
