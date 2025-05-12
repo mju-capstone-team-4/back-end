@@ -26,4 +26,11 @@ public class PlantController {
     public ResponseEntity<String> searchOne(@PathVariable String q1) {
         return ResponseEntity.ok().body(plantService.searchOne(q1));
     }
+
+//    @GetMapping("/search/save/{q1}")
+//    public ResponseEntity<String> searchSaveOne(@PathVariable String q1) {
+//        plantService.fetchAndSaveDetail(q1);
+//        return ResponseEntity.ok().body("save completed");
+//    }
+
 }
