@@ -26,7 +26,9 @@ public class QuestionController {
             @RequestParam(value = "size", defaultValue = "10") int size)
     {
         Long id = jwtUtil.getLoginMember().getId();
-        Page<Question> questions = questionService.getMyQuestion(id);
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Question> questions = questionService.getMyQuestion(id,pageable);
         Page<QuestionResponse> response = questions.map(QuestionResponse::createQuestionResponse);
         return ResponseEntity.ok().body(response);
     }

@@ -97,7 +97,7 @@ public class QuestionService {
         return question;
     }
 
-    public Page<Question> getMyQuestion(Long memberId) {
-        return questionRepository.findAllByMemberId(memberId);
+    public Page<Question> getMyQuestion(Long memberId, Pageable pageable) {
+        return questionRepository.findAllByMemberId(memberId, pageable);
     }
 }
