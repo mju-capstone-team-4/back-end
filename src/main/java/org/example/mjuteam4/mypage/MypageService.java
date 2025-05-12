@@ -127,13 +127,13 @@ public class MypageService {
 
     public List<PlantsForRegisterResponse> searchPlantByName(String plantName) {
 
-        List<Plant> allByName = plantRepository.findByNameContaining(plantName);
+        List<Plant> allByName = plantRepository.findByPlantGnrlNmContaining(plantName);
         List<PlantsForRegisterResponse> plantsForRegisterResponseList = new ArrayList<>();
 
         for (Plant plant : allByName) {
             PlantsForRegisterResponse plantsForRegisterResponse = PlantsForRegisterResponse.builder()
                     .id(plant.getId())
-                    .name(plant.getName())
+                    .name(plant.getPlantGnrlNm())
                     .build();
 
             plantsForRegisterResponseList.add(plantsForRegisterResponse);

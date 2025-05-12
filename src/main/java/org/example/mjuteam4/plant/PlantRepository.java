@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface PlantRepository extends JpaRepository<Plant, Long> {
 
-    List<Plant> findByNameContaining(String plantName);
+    List<Plant> findByPlantGnrlNmContaining(String plantGnrlNm);
 }
