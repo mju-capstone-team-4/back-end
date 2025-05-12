@@ -20,7 +20,7 @@ public class QuestionController {
     private final JwtUtil jwtUtil;
     private final QuestionService questionService;
     // 내 질문 게시글 모아보기
-    @PostMapping("/my")
+    @GetMapping("/my")
     public ResponseEntity<Page<QuestionResponse>> getMyQuestion(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size)
