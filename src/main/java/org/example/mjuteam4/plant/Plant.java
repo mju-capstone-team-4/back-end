@@ -15,11 +15,11 @@ public class Plant {
 
     private String description;
 
-    private Integer waterCycle;
+    private Integer waterCycle; // 물주는 주기
 
-    private Integer repottingCycle;
+    private Integer repottingCycle; // 분갈이 주기
 
-    private Integer fertilizingCycle;
+    private Integer fertilizingCycle; // 비료 주기
 
     private String plantPilbkNo; // 도감번호 (PK)
 
@@ -32,6 +32,8 @@ public class Plant {
     private String genusKorNm;        // 속명(한글)
 
     private String leafDesc;          // 잎 설명
+
+    @Lob
     private String flwrDesc;          // 꽃 설명
     private String fritDesc;          // 열매 설명
 
