@@ -19,6 +19,17 @@ public class QuestionController {
 
     private final JwtUtil jwtUtil;
     private final QuestionService questionService;
+    // 내 질문 게시글 모아보기
+    @PostMapping("/my")
+    public ResponseEntity<Page<QuestionResponse>> getMyQuestion(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size)
+    {
+        Long id = jwtUtil.getLoginMember().getId();
+        Page<Question> questions = questionService.getMyQuestion(id);
+        Page<QuestionResponse> response = questions.map(QuestionResponse::createQuestionResponse);
+        return ResponseEntity.ok().body(response);
+    }
 
     // 질문 생성
     @PostMapping("/create")

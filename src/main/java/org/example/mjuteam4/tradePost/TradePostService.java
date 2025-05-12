@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -83,6 +85,10 @@ public class TradePostService {
             throw new TradePostNotFound();
         }
         return tradePost;
+    }
+
+    public Page<TradePost> getMyTradPost(Long memberId) {
+        return tradePostRepository.findByMemberId(memberId);
     }
 
 }
