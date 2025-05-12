@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -95,4 +97,7 @@ public class QuestionService {
         return question;
     }
 
+    public Page<Question> getMyQuestion(Long memberId) {
+        return questionRepository.findAllByMemberId(memberId);
+    }
 }

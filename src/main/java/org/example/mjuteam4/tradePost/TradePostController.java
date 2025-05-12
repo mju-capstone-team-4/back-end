@@ -11,12 +11,25 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/trade")
 public class TradePostController {
     private final TradePostService tradePostService;
     private final JwtUtil jwtUtil;
+
+    @PostMapping("/my")
+    public ResponseEntity<Page<TradePostResponse>> myTradePostList(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size
+    ) {
+        Long id = jwtUtil.getLoginMember().getId();
+        Page<TradePost> memberTradPost = tradePostService.getMyTradPost(id);
+        Page<TradePostResponse> response = memberTradPost.map(TradePostResponse::create);
+        return ResponseEntity.ok().body(response);
+    }
     @PostMapping("/create")
     public ResponseEntity<TradePostResponse> tradePostCreate(@ModelAttribute TradePostRequest tradePostRequest) {
         Long memberId = jwtUtil.getLoginMember().getId();
