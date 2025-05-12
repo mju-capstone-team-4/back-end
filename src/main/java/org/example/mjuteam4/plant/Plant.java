@@ -35,12 +35,14 @@ public class Plant {
     private String flwrDesc;          // 꽃 설명
     private String fritDesc;          // 열매 설명
 
+    @Lob
     private String shpe;              // 형태
     private String sz;                // 크기
 
     private String grwEvrntDesc;      // 생육환경
     private String dstrb;             // 분포정보
 
+    @Lob
     private String useMthdDesc;       // 사용법
     private String imgUrl;            // 이미지
 
