@@ -20,13 +20,15 @@ public class TradePostController {
     private final TradePostService tradePostService;
     private final JwtUtil jwtUtil;
 
-    @PostMapping("/my")
+    @GetMapping("/my")
     public ResponseEntity<Page<TradePostResponse>> myTradePostList(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size
     ) {
         Long id = jwtUtil.getLoginMember().getId();
-        Page<TradePost> memberTradPost = tradePostService.getMyTradPost(id);
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<TradePost> memberTradPost = tradePostService.getMyTradPost(id, pageable);
         Page<TradePostResponse> response = memberTradPost.map(TradePostResponse::create);
         return ResponseEntity.ok().body(response);
     }

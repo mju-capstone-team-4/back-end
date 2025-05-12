@@ -27,6 +27,10 @@ public class TradePostService {
     private final StorageService storageService;
     private final JwtUtil jwtUtil;
 
+    public Page<TradePost> getMyTradPost(Long memberId, Pageable pageable) {
+        return tradePostRepository.findByMemberId(memberId, pageable);
+    }
+
     public TradePost createTradePost(Long memberId, TradePostRequest tradePostRequest) {
         TradePost tradePost = TradePost.create(tradePostRequest);
         TradePostImage tradePostImage = tradePostImageService.createTradePostImage(tradePostRequest.getImage());
@@ -85,10 +89,6 @@ public class TradePostService {
             throw new TradePostNotFound();
         }
         return tradePost;
-    }
-
-    public Page<TradePost> getMyTradPost(Long memberId) {
-        return tradePostRepository.findByMemberId(memberId);
     }
 
 }
