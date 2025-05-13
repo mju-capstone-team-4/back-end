@@ -11,6 +11,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +25,7 @@ public class PlantService {
 
     private final RestTemplate restTemplate = new RestTemplate();
     private final PlantRepository plantRepository;
+    private final ExecutorService executor = Executors.newFixedThreadPool(10);
 
     @Value("${openapi.data}")
     private String serviceKey;
@@ -64,7 +71,7 @@ public class PlantService {
             log.info("status = {}", response.getStatusCode());
             log.info("body = {}", response.getBody());
             String responseXml = response.getBody();
-            savePlantFromSearchOneResponse(responseXml);
+//            savePlantFromSearchOneResponse(responseXml);
             return response.getBody();
         } catch (Exception e) {
             log.error("API 호출 실패", e);
@@ -118,8 +125,10 @@ public class PlantService {
     public void fetchAndSaveAllPlants() {
         int page = 1;
         int totalPages = 1;
+        int max = 100;
         int processed = 0;
-        int max = 100; // ✅ 저장할 최대 수
+
+        List<Future<?>> futures = new ArrayList<>();
 
         while (page <= totalPages && processed < max) {
             try {
@@ -144,16 +153,22 @@ public class PlantService {
                 Object items = body.optJSONObject("items").opt("item");
 
                 if (items instanceof JSONObject singleItem) {
-                    if (processItem(singleItem)) processed++;
+                    if (processed >= max) break;
+                    submitDetailTask(singleItem.optString("plantPilbkNo"), futures);
+                    processed++;
                 } else if (items instanceof JSONArray itemArray) {
                     for (int i = 0; i < itemArray.length(); i++) {
                         if (processed >= max) break;
                         JSONObject item = itemArray.getJSONObject(i);
-                        if (processItem(item)) processed++;
+                        String detailYn = item.optString("detailYn");
+                        if (!"Y".equals(detailYn)) continue;
+
+                        submitDetailTask(item.optString("plantPilbkNo"), futures);
+                        processed++;
                     }
                 }
 
-                log.info("✅ {}페이지 처리 완료 (누적 저장 {}개)", page, processed);
+                log.info("✅ {}페이지 처리 완료 (누적 요청 {}건)", page, processed);
                 page++;
 
             } catch (Exception e) {
@@ -161,6 +176,29 @@ public class PlantService {
                 page++;
             }
         }
+
+        // 병렬 작업 완료 대기
+        for (Future<?> future : futures) {
+            try {
+                future.get(); // 예외 전파
+            } catch (Exception e) {
+                log.error("❌ 병렬 저장 실패", e);
+            }
+        }
+
+        executor.shutdown();
+    }
+
+    private void submitDetailTask(String plantPilbkNo, List<Future<?>> futures) {
+        futures.add(executor.submit(() -> {
+            try {
+                String json = searchOne(plantPilbkNo);
+                savePlantFromSearchOneResponse(json);
+                Thread.sleep(200); // 요청 간 간격 약간 유지
+            } catch (Exception e) {
+                log.error("❌ 상세 저장 실패 (plantPilbkNo = {})", plantPilbkNo, e);
+            }
+        }));
     }
 
     private boolean processItem(JSONObject item) {
