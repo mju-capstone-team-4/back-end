@@ -63,12 +63,12 @@ public class TokenProvider {
         return generateToken(authentication, REFRESH_TOKEN_EXPIRE_TIME);
     }
 
-    public String getTestToken(String username) {
+    public String getTestToken(String email) {
         Date now = new Date();
         Date expiredDate = new Date(now.getTime() + 1231233);
 
         String jwt = Jwts.builder()
-                .subject(username)
+                .setSubject(email)
                 .issuedAt(now)
                 .claim(KEY_ROLE, "ROLE_USER")
                 .signWith(secretKey, Jwts.SIG.HS512)
@@ -79,7 +79,7 @@ public class TokenProvider {
         List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
 
         // Authentication 객체 생성 후 SecurityContext에 저장
-        Authentication authentication = new UsernamePasswordAuthenticationToken(username, null, authorities);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(email, null, authorities);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         return jwt;
@@ -89,10 +89,10 @@ public class TokenProvider {
         Date now = new Date();
         Date expiredDate = new Date(now.getTime() + expireTime);
 
-        String username = authentication.getName();
-        log.info("name = {}", username);
+        String email = authentication.getName();
+        log.info("email = {}", email);
 
-        Optional<Member> optionalMember = memberRepository.findByUsername(username);
+        Optional<Member> optionalMember = memberRepository.findByEmail(email);
         String role = optionalMember.map(member -> member.getRole().name()).orElse("ROLE_USER");
 
 
@@ -114,9 +114,9 @@ public class TokenProvider {
         Claims claims = parseClaims(token);
 
         // 사용자 ID (subject) 추출
-        String username = claims.getSubject();
+        String email = claims.getSubject();
 
-        Member member = memberRepository.findByUsername(username)
+        Member member = memberRepository.findByEmail(email)
                 .orElseThrow(MemberNotFoundException::new);
 
         String role = member.getRole().name();
@@ -126,7 +126,7 @@ public class TokenProvider {
         List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role));
 
         // Security의 User 객체 생성
-        User principal = new User(username, "", authorities);
+        User principal = new User(email, "", authorities);
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }
 
@@ -139,9 +139,9 @@ public class TokenProvider {
         if (StringUtils.hasText(accessToken)) {
             log.info("accesToken = {}", accessToken);
 
-            String username = extractUserIdFromAccessToken(accessToken);
-            log.info("username = {}", username);
-            Member member = memberRepository.findByUsername(username)
+            String email = extractEmailFromAccessToken(accessToken);
+            log.info("email = {}", email);
+            Member member = memberRepository.findByEmail(email)
                     .orElseThrow(MemberNotFoundException::new);
             String refreshToken = member.getRefreshToken();
 
@@ -155,7 +155,7 @@ public class TokenProvider {
         return null;
     }
 
-    public String extractUserIdFromAccessToken(String expiredAccessToken) {
+    public String extractEmailFromAccessToken(String expiredAccessToken) {
         try {
             Claims claims = Jwts.parser()
                     .setSigningKey(secretKey)

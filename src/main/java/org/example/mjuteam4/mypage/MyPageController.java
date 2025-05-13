@@ -25,7 +25,7 @@ public class MyPageController {
 
     @PostMapping("token")
     public ResponseEntity<String> me(@RequestBody TokenRequest tokenRequest) {
-        return ResponseEntity.ok().body(tokenProvider.getTestToken(tokenRequest.getUsername()));
+        return ResponseEntity.ok().body(tokenProvider.getTestToken(tokenRequest.getEmail()));
     }
 
     @GetMapping("/members")
