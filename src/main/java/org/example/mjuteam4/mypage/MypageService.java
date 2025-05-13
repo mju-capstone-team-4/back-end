@@ -123,7 +123,6 @@ public class MypageService {
         Member loginMember = jwtUtil.getLoginMember();
 
         loginMember.updateMember(
-                request.getEmail(),
                 request.getUsername()
         );
 
