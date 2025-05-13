@@ -7,5 +7,5 @@ import lombok.NoArgsConstructor;
 @Getter
 public class TokenRequest {
 
-    private String username;
+    private String email;
 }
