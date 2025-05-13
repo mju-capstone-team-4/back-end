@@ -10,6 +10,7 @@ public enum ResultCode {
     // plant
     REGISTER_MYPLANT_SUCCESS(200, "REGISTER_MYPLANT_SUCCESS", "내 식물 등록 성공"),
     DELETE_MYPLANT_SUCCESS(200, "DELETE_MYPLANT_SUCCESS", "내 식물 삭제 성공"),
+    UPDATE_CYCLING_SUCCESS(200, "UPDATE_CYCLING_SUCCESS", "내 식물 주기 등록 성공"),
 
     // member
     DELETE_MEMBER_SUCCESS(200, "DELETE_MEMBER_SUCCESS", "회원 탈퇴 성공"),

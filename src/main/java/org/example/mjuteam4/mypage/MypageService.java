@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,8 +65,13 @@ public class MypageService {
         Plant plant = plantRepository.findById(request.getPlantId())
                 .orElseThrow(() -> new GlobalException(ExceptionCode.PLANT_NOT_FOUND));
 
-        String imageUrl = storageService.uploadFile(file, "myplant", loginMember.getId());
+        String imageUrl = "";
 
+        if (file != null && !file.isEmpty()) {
+            // 파일 저장 로직
+            imageUrl = storageService.uploadFile(file, "myplant", loginMember.getId());
+
+        }
         MyPlant myplant = MyPlant.builder()
                 .member(loginMember)
                 .plant(plant)
@@ -118,7 +124,6 @@ public class MypageService {
         Member loginMember = jwtUtil.getLoginMember();
 
         loginMember.updateMember(
-                request.getEmail(),
                 request.getUsername()
         );
 
@@ -148,13 +153,22 @@ public class MypageService {
         MyPlant myPlant = myPlantRepository.findById(myPlantId)
                 .orElseThrow(() -> new GlobalException(ExceptionCode.MY_PLANT_NOT_FOUND));
 
-        Integer waterCycle = myPlant.getPlant().getWaterCycle();
-        Integer repottingCycle = myPlant.getPlant().getRepottingCycle();
-        Integer fertilizingCycle = myPlant.getPlant().getFertilizingCycle();
+        Integer waterCycle = myPlant.getWaterCycle();
+        Integer repottingCycle = myPlant.getRepottingCycle();
+        Integer fertilizingCycle = myPlant.getFertilizingCycle();
 
-        List<LocalDate> wateringDates = calculateDates(myPlant, waterCycle, 90);
-        List<LocalDate> repottingDates = calculateDates(myPlant, repottingCycle, 365);
-        List<LocalDate> fertilizingDates = calculateDates(myPlant,fertilizingCycle, 365);
+        List<LocalDate> wateringDates = (waterCycle != null)
+                ? calculateDates(myPlant, waterCycle, 90)
+                : new ArrayList<>();
+
+        List<LocalDate> repottingDates = (repottingCycle != null)
+                ? calculateDates(myPlant, repottingCycle, 365)
+                : new ArrayList<>();
+
+        List<LocalDate> fertilizingDates = (fertilizingCycle != null)
+                ? calculateDates(myPlant, fertilizingCycle, 365)
+                : new ArrayList<>();
+
         log.info("wateringDate = {}", wateringDates);// 3개월 정도 커버
 
         return MyPlantResponse.builder()
@@ -168,9 +182,12 @@ public class MypageService {
 
 
     private List<LocalDate> calculateDates(MyPlant myPlant, Integer cycle, int daysAhead) {
+
+        if (cycle == null || cycle <= 0) {
+            return Collections.emptyList(); // 주기 없거나 0 이하면 빈 리스트 반환
+        }
+
         List<LocalDate> result = new ArrayList<>();
-
-
         LocalDate nextDate = myPlant.getLastWateredDate().plusDays(cycle);
         LocalDate endDate = LocalDate.now().plusDays(daysAhead);
 
@@ -183,4 +200,12 @@ public class MypageService {
     }
 
 
+    @Transactional
+    public void updateCycling(Long myPlantId, UpdateCyclingRequest request) {
+        MyPlant myPlant = myPlantRepository.findById(myPlantId)
+                .orElseThrow(() -> new GlobalException(ExceptionCode.MY_PLANT_NOT_FOUND));
+
+        myPlant.updateCycling(request.getWaterCycle(), request.getRepottingCycle(), request.getFertilizingCycle());
+        myPlantRepository.save(myPlant);
+    }
 }

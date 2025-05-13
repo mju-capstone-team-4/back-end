@@ -9,6 +9,4 @@ public class UpdateMyInfoRequest {
 
     private String username;
 
-    private String email;
-
 }

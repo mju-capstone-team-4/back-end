@@ -60,8 +60,9 @@ public class MyPageController {
 
     // 내 식물 등록
     @PostMapping("/myplant")
-    public ResponseEntity<ResultResponse> registerMyPlant(@RequestPart("data") RegisterMyPlantRequest registerMyPlantRequest,
-                                                          @RequestPart("file") MultipartFile file) {
+    public ResponseEntity<ResultResponse> registerMyPlant(
+            @RequestPart("data") RegisterMyPlantRequest registerMyPlantRequest,
+            @RequestPart(value = "file", required = false) MultipartFile file) {
         mypageService.registerMyPlant(registerMyPlantRequest, file);
         return ResponseEntity.ok().body(ResultResponse.of(ResultCode.REGISTER_MYPLANT_SUCCESS));
     }
@@ -91,5 +92,11 @@ public class MyPageController {
         return ResponseEntity.ok().body(mypageService.getMyPlantSchedule(myPlantId));
     }
 
-
+    @PostMapping("/myplant/{myPlantId}/cycling")
+    public ResponseEntity<ResultResponse> updateCycling(
+            @PathVariable Long myPlantId,
+            @RequestBody UpdateCyclingRequest request ) {
+        mypageService.updateCycling(myPlantId, request);
+        return ResponseEntity.ok().body(ResultResponse.of(ResultCode.UPDATE_CYCLING_SUCCESS));
+    }
 }

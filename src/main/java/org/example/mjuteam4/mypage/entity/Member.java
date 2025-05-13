@@ -77,8 +77,7 @@ public class Member {
         this.myPlantList = myPlantList;
     }
 
-    public void updateMember(String email, String username){
-        this.email = email;
+    public void updateMember(String username){
         this.username = username;
     }
 
