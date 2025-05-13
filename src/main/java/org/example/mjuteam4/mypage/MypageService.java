@@ -153,9 +153,9 @@ public class MypageService {
         MyPlant myPlant = myPlantRepository.findById(myPlantId)
                 .orElseThrow(() -> new GlobalException(ExceptionCode.MY_PLANT_NOT_FOUND));
 
-        Integer waterCycle = myPlant.getPlant().getWaterCycle();
-        Integer repottingCycle = myPlant.getPlant().getRepottingCycle();
-        Integer fertilizingCycle = myPlant.getPlant().getFertilizingCycle();
+        Integer waterCycle = myPlant.getWaterCycle();
+        Integer repottingCycle = myPlant.getRepottingCycle();
+        Integer fertilizingCycle = myPlant.getFertilizingCycle();
 
         List<LocalDate> wateringDates = calculateDates(myPlant, waterCycle, 90);
         List<LocalDate> repottingDates = calculateDates(myPlant, repottingCycle, 365);
