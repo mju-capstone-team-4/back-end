@@ -188,4 +188,11 @@ public class MypageService {
     }
 
 
+    @Transactional
+    public void updateCycling(Long myPlantId, UpdateCyclingRequest request) {
+        MyPlant myPlant = myPlantRepository.findById(myPlantId)
+                .orElseThrow(() -> new GlobalException(ExceptionCode.MY_PLANT_NOT_FOUND));
+
+        myPlant.updateCycling(request.getWaterCycle(), request.getRepottingCycle(), request.getFertilizingCycle());
+    }
 }

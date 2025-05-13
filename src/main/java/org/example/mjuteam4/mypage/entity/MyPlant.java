@@ -24,6 +24,12 @@ public class MyPlant {
 
     private boolean recommendTonic;
 
+    private Integer waterCycle; // 물주는 주기
+
+    private Integer repottingCycle; // 분갈이 주기
+
+    private Integer fertilizingCycle; // 비료 주기
+
     private String imageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -41,5 +47,11 @@ public class MyPlant {
         this.imageUrl = imageUrl;
         this.member = member;
         this.plant = plant;
+    }
+
+    public void updateCycling(Integer waterCycle, Integer repottingCycle, Integer fertilizingCycle) {
+        this.waterCycle = waterCycle;
+        this.repottingCycle = repottingCycle;
+        this.fertilizingCycle = fertilizingCycle;
     }
 }

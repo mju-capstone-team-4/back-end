@@ -92,5 +92,11 @@ public class MyPageController {
         return ResponseEntity.ok().body(mypageService.getMyPlantSchedule(myPlantId));
     }
 
-
+    @PostMapping("/myplant/{myPlantId}/cycling")
+    public ResponseEntity<ResultResponse> updateCycling(
+            @PathVariable Long myPlantId,
+            @RequestBody UpdateCyclingRequest request ) {
+        mypageService.updateCycling(myPlantId, request);
+        return ResponseEntity.ok().body(ResultResponse.of(ResultCode.UPDATE_CYCLING_SUCCESS));
+    }
 }
