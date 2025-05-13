@@ -64,8 +64,13 @@ public class MypageService {
         Plant plant = plantRepository.findById(request.getPlantId())
                 .orElseThrow(() -> new GlobalException(ExceptionCode.PLANT_NOT_FOUND));
 
-        String imageUrl = storageService.uploadFile(file, "myplant", loginMember.getId());
+        String imageUrl = "";
 
+        if (file != null && !file.isEmpty()) {
+            // 파일 저장 로직
+            imageUrl = storageService.uploadFile(file, "myplant", loginMember.getId());
+
+        }
         MyPlant myplant = MyPlant.builder()
                 .member(loginMember)
                 .plant(plant)

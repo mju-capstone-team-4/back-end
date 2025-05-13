@@ -60,8 +60,9 @@ public class MyPageController {
 
     // 내 식물 등록
     @PostMapping("/myplant")
-    public ResponseEntity<ResultResponse> registerMyPlant(@RequestPart("data") RegisterMyPlantRequest registerMyPlantRequest,
-                                                          @RequestPart("file") MultipartFile file) {
+    public ResponseEntity<ResultResponse> registerMyPlant(
+            @RequestPart("data") RegisterMyPlantRequest registerMyPlantRequest,
+            @RequestPart(value = "file", required = false) MultipartFile file) {
         mypageService.registerMyPlant(registerMyPlantRequest, file);
         return ResponseEntity.ok().body(ResultResponse.of(ResultCode.REGISTER_MYPLANT_SUCCESS));
     }
