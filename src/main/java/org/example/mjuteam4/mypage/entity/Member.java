@@ -37,7 +37,7 @@ public class Member {
         ROLE_USER, ROLE_ADMIN
     }
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MyPlant> myPlantList = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", orphanRemoval = true, cascade = CascadeType.ALL)
