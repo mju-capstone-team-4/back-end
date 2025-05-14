@@ -6,7 +6,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.mjuteam4.security.exception.TokenException;
 import org.example.mjuteam4.security.provider.TokenProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -38,33 +37,22 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        try {
-            String accessToken = resolveToken(request);
+        String accessToken = resolveToken(request);
 
-            if (StringUtils.hasText(accessToken)) {
-                if (tokenProvider.validTokenInRedis(accessToken)) {
-                    setAuthentication(accessToken);
-                } else {
-                    throw new TokenException("유효하지 않은 토큰입니다.");
-                }
-            } else {
-                String reissueAccessToken = tokenProvider.reissueAccessToken(accessToken);
-
-                if (StringUtils.hasText(reissueAccessToken)) {
-                    setAuthentication(reissueAccessToken);
-                    response.setHeader(AUTHORIZATION, "Bearer " + reissueAccessToken);
-                } else {
-                    throw new TokenException("토큰이 없거나 재발급에 실패했습니다.");
-                }
-
+        if(StringUtils.hasText(accessToken)) {
+            if(tokenProvider.validTokenInRedis(accessToken)) {
+                setAuthentication(accessToken);
             }
+        } else {
+            String reissueAccessToken = tokenProvider.reissueAccessToken(accessToken);
 
-            filterChain.doFilter(request, response);
-
-        } catch (TokenException e) {
-            log.warn("❌ 토큰 인증 실패: {}", e.getMessage());
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage()); // 또는 SC_BAD_REQUEST
+            if (StringUtils.hasText(reissueAccessToken)) {
+                setAuthentication(reissueAccessToken);
+                response.setHeader(AUTHORIZATION, "Bearer " + reissueAccessToken);
+            }
         }
+
+        filterChain.doFilter(request, response);
     }
 
 
