@@ -23,6 +23,7 @@ public class TokenService {
     }
 
     public boolean validAccessToken(String accessToken) {
+        log.info("validAccessToken = {}", tokenRepository.findByAccessToken(accessToken).isPresent());
         return tokenRepository.findByAccessToken(accessToken).isPresent();
     }
 

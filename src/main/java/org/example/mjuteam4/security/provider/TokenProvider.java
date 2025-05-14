@@ -54,7 +54,9 @@ public class TokenProvider {
     }
 
     public String generateAccessToken(Authentication authentication) {
+        log.info("authentication = {}", authentication.getName());
         String accessToken = generateToken(authentication, ACCESS_TOKEN_EXPIRE_TIME);
+        log.info("access token = {}", accessToken);
         tokenService.saveAccessToken(accessToken);
         return accessToken;
     }
@@ -67,14 +69,6 @@ public class TokenProvider {
         Date now = new Date();
         Date expiredDate = new Date(now.getTime() + 1231233);
 
-        String jwt = Jwts.builder()
-                .setSubject(email)
-                .issuedAt(now)
-                .claim(KEY_ROLE, "ROLE_USER")
-                .signWith(secretKey, Jwts.SIG.HS512)
-                .expiration(expiredDate)
-                .compact();
-
         // 권한 리스트 생성
         List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
 
@@ -82,7 +76,7 @@ public class TokenProvider {
         Authentication authentication = new UsernamePasswordAuthenticationToken(email, null, authorities);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        return jwt;
+        return generateAccessToken(authentication);
     }
 
     private String generateToken(Authentication authentication, long expireTime) {
@@ -197,6 +191,7 @@ public class TokenProvider {
     }
 
     public boolean validTokenInRedis(String token) {
+        log.info("token = {}", token);
         return tokenService.validAccessToken(token);
     }
 
