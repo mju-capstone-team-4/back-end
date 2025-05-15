@@ -34,6 +34,8 @@ public class StompWebSocketConfig implements WebSocketMessageBrokerConfigurer {
             protected Principal determineUser(ServerHttpRequest request,
                                               WebSocketHandler wsHandler,
                                               Map<String, Object> attributes) {
+                log.debug("handshakeHandler start");
+                log.debug("handshakeHandler principal {}", (Principal) attributes.get("principal"));
                 return (Principal) attributes.get("principal");
             }
         };
