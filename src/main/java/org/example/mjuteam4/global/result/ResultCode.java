@@ -15,6 +15,7 @@ public enum ResultCode {
     // member
     DELETE_MEMBER_SUCCESS(200, "DELETE_MEMBER_SUCCESS", "회원 탈퇴 성공"),
     UPDATE_MY_INFO_SUCCESS(200, "UPDATE_MY_INFO_SUCCESS", "내 정보 변경 성공"),
+    REGISTER_MEMBER_PROFILE(200, "REGISTER_MEMBER_PROFILE", "회원 사진 등록 성공"),
     ;
 
     private final int status;

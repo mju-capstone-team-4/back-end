@@ -96,4 +96,8 @@ public class Member {
         tradePosts.add(tradePost);
         tradePost.setMember(this);
     }
+
+    public void updateProfile(String url) {
+        this.profileUrl = url;
+    }
 }
