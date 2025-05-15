@@ -23,8 +23,9 @@ public class StompHandler implements ChannelInterceptor {
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
+        log.debug("StompHandler presend start");
         final StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
-
+        log.debug("StompHandler command: {}", accessor.getCommand());
         if(StompCommand.CONNECT == accessor.getCommand()){
             log.info("🔐 WebSocket CONNECT: Checking token validity...");
 
