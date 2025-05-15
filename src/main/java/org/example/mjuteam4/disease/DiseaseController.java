@@ -2,6 +2,7 @@ package org.example.mjuteam4.disease;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.mjuteam4.disease.dto.ClientDiseaseResponse;
 import org.example.mjuteam4.disease.dto.DiseaseRequest;
 import org.example.mjuteam4.disease.dto.DiseaseResponse;
 import org.example.mjuteam4.global.uitl.JwtUtil;
@@ -20,7 +21,7 @@ public class DiseaseController {
     private final DiseaseService diseaseService;
     private final JwtUtil jwtUtil;
     @PostMapping("/predict")
-    public CompletableFuture<ResponseEntity<DiseaseResponse>> predict(@ModelAttribute DiseaseRequest diseaseRequest) throws IOException {
+    public CompletableFuture<ResponseEntity<ClientDiseaseResponse>> predict(@ModelAttribute DiseaseRequest diseaseRequest) throws IOException {
         Long memberId = jwtUtil.getLoginMember().getId();
         log.debug("disease controller thread: " + Thread.currentThread());
         return diseaseService.predict(diseaseRequest,memberId).thenApply(diseaseResponse -> {
