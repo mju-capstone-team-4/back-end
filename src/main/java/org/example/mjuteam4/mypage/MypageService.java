@@ -208,4 +208,14 @@ public class MypageService {
         myPlant.updateCycling(request.getWaterCycle(), request.getRepottingCycle(), request.getFertilizingCycle());
         myPlantRepository.save(myPlant);
     }
+
+    @Transactional
+    public void registerProfileImage(MultipartFile file) {
+
+        Member loginMember = jwtUtil.getLoginMember();
+
+        String url = storageService.uploadFile(file, "myplant", loginMember.getId());
+        loginMember.updateProfile(url);
+        memberRepository.save(loginMember);
+    }
 }

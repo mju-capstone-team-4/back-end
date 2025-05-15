@@ -23,6 +23,7 @@ public class MyPageController {
     private final MypageService mypageService;
     private final TokenProvider tokenProvider;
 
+    // 텟트 용 토큰 발급
     @PostMapping("token")
     public ResponseEntity<String> me(@RequestBody TokenRequest tokenRequest) {
         return ResponseEntity.ok().body(tokenProvider.getTestToken(tokenRequest.getEmail()));
@@ -56,6 +57,13 @@ public class MyPageController {
     public ResponseEntity<ResultResponse> updateMyInfo(@RequestBody UpdateMyInfoRequest request) {
         mypageService.updateMyInfo(request);
         return ResponseEntity.ok().body(ResultResponse.of(ResultCode.UPDATE_MY_INFO_SUCCESS));
+    }
+
+    @PostMapping("/profile")
+    public ResponseEntity<ResultResponse> registerProfileImage(
+            @RequestParam("file") MultipartFile file) {
+        mypageService.registerProfileImage(file);
+        return ResponseEntity.ok().body(ResultResponse.of(ResultCode.REGISTER_MEMBER_PROFILE));
     }
 
     // 내 식물 등록
@@ -92,6 +100,7 @@ public class MyPageController {
         return ResponseEntity.ok().body(mypageService.getMyPlantSchedule(myPlantId));
     }
 
+    // 내 식물 주기 설정
     @PostMapping("/myplant/{myPlantId}/cycling")
     public ResponseEntity<ResultResponse> updateCycling(
             @PathVariable Long myPlantId,
@@ -99,4 +108,5 @@ public class MyPageController {
         mypageService.updateCycling(myPlantId, request);
         return ResponseEntity.ok().body(ResultResponse.of(ResultCode.UPDATE_CYCLING_SUCCESS));
     }
+
 }
