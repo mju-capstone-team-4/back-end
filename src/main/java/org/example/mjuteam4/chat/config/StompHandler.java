@@ -52,7 +52,9 @@ public class StompHandler implements ChannelInterceptor {
             String name = accessor.getUser().getName();
             String roomId = accessor.getDestination().split("/")[2];
             log.info("🔍 SUBSCRIBE request by user '{}' for room '{}'", name, roomId);
-            if(!chatService.isRoomParticipant(name, Long.parseLong(roomId))){
+            boolean isRoomParticipant = chatService.isRoomParticipant(name, Long.parseLong(roomId));
+            log.debug("roomId: {} , isParticipant: {}",roomId,isRoomParticipant);
+            if(!isRoomParticipant){
                 log.warn("🚫 Access denied: User '{}' is not a participant of room '{}'", name, roomId);
                 throw new UnauthorizedChatAccess();
             }
