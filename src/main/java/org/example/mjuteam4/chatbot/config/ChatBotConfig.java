@@ -10,7 +10,7 @@ import org.springframework.core.io.Resource;
 
 @Configuration
 public class ChatBotConfig {
-    @Value("classpath:/prompt.txt")
+    @Value("classpath:/prompts/prompt.txt")
     private Resource resource;
     @Bean
     public ChatClient chatBotClient(ChatClient.Builder chatClientBuilder){

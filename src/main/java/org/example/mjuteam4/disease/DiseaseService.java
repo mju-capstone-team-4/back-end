@@ -2,8 +2,11 @@ package org.example.mjuteam4.disease;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.mjuteam4.chatbot.service.ChatBotService;
+import org.example.mjuteam4.disease.dto.ClientDiseaseResponse;
 import org.example.mjuteam4.disease.dto.DiseaseRequest;
 import org.example.mjuteam4.disease.dto.DiseaseResponse;
+import org.example.mjuteam4.disease.dto.PrescriptionResponse;
 import org.example.mjuteam4.storage.StorageService;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -18,12 +21,12 @@ import java.util.concurrent.CompletableFuture;
 @RequiredArgsConstructor
 @Slf4j
 public class DiseaseService {
-
+    private final ChatBotService chatBotService;
     private final StorageService storageService;
-    private static final String AIEC2ADDRESS = "3.39.194.226";
+    private static final String AIEC2ADDRESS = "15.164.169.251";
 
     // 단일 파일 업로드 한 후 얻은 이미지 URL을 AI 서버에 전송하여 예측값을 가져온다.
-    public CompletableFuture<DiseaseResponse> predict(DiseaseRequest diseaseRequest, Long memberId) throws IOException {
+    public CompletableFuture<ClientDiseaseResponse> predict(DiseaseRequest diseaseRequest, Long memberId) throws IOException {
 
         return CompletableFuture.supplyAsync(() -> {
             log.debug("disease service thread: " + Thread.currentThread());
@@ -54,8 +57,10 @@ public class DiseaseService {
                 response = restTemplate.exchange(newUrl, HttpMethod.POST, requestEntity, DiseaseResponse.class);
             }
 
-            DiseaseResponse result = response.getBody();
-            return result;
+            DiseaseResponse diseaseResponse = response.getBody();
+            PrescriptionResponse prescriptionResponse = chatBotService.generatePrescription(diseaseResponse.getResult());
+
+            return ClientDiseaseResponse.createWith(diseaseResponse, prescriptionResponse);
         });
 
     }
