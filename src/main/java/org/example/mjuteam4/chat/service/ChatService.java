@@ -108,6 +108,7 @@ public class ChatService {
         ChatRoom chatRoom = chatRoomRepository.findById(roomId).orElseThrow(ChatRoomNotFound::new);
         log.debug("chatRoom: " + chatRoom.getName());
 
+        log.debug("name is {}", name);
         Member member = memberRepository.findByUsername(name).orElseThrow(MemberNotFoundException::new);
         log.debug("member: " + member.getUsername());
 
