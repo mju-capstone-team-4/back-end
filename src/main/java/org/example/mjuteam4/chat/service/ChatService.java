@@ -104,14 +104,25 @@ public class ChatService {
     }
 
     public boolean isRoomParticipant(String name, Long roomId){
+
         ChatRoom chatRoom = chatRoomRepository.findById(roomId).orElseThrow(ChatRoomNotFound::new);
+        log.debug("chatRoom: " + chatRoom.getName());
+
         Member member = memberRepository.findByUsername(name).orElseThrow(MemberNotFoundException::new);
+        log.debug("member: " + member.getUsername());
+
         List<ChatParticipant> chatParticipants = chatParticipantRepository.findByChatRoom(chatRoom);
+        log.debug("size of chatParticipant: {}", chatParticipants.size());
+
         for(ChatParticipant c : chatParticipants){
+            log.debug("Chat Participant: {}", c);
             if(c.getMember().equals(member)){
+                log.debug("name: {} is participant", c.getMember().getUsername());
                 return true;
             }
         }
+
+        log.debug("return false");
         return false;
     }
 
