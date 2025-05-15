@@ -28,12 +28,12 @@ public class StompWebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Bean
     public HandshakeHandler handshakeHandler() {
-        log.debug("handshakeHandler start");
         return new DefaultHandshakeHandler() {
             @Override
             protected Principal determineUser(ServerHttpRequest request,
                                               WebSocketHandler wsHandler,
                                               Map<String, Object> attributes) {
+                log.debug("handshakeHandler start");
                 return (Principal) attributes.get("principal");
             }
         };
