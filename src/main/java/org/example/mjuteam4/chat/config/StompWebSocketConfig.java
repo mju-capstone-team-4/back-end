@@ -1,6 +1,7 @@
 package org.example.mjuteam4.chat.config;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.mjuteam4.chat.config.interceptor.AuthHandshakeInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,12 +21,14 @@ import java.util.Map;
 @Configuration
 @EnableWebSocketMessageBroker
 @RequiredArgsConstructor
+@Slf4j
 public class StompWebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private final StompHandler stompHandler;
     private final AuthHandshakeInterceptor authHandshakeInterceptor;
 
     @Bean
     public HandshakeHandler handshakeHandler() {
+        log.debug("handshakeHandler start");
         return new DefaultHandshakeHandler() {
             @Override
             protected Principal determineUser(ServerHttpRequest request,
