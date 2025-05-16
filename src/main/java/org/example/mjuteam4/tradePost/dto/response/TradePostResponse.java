@@ -12,6 +12,7 @@ public class TradePostResponse {
     // Member
     private Long memberId;
     private String username;
+    private String email;
 
     // TradePost
     private Long tradePostId;
@@ -24,6 +25,7 @@ public class TradePostResponse {
         Member member = tradePost.getMember();
         this.memberId = member.getId();
         this.username = member.getUsername();
+        this.email = member.getEmail();
         
         this.tradePostId = tradePost.getId();
         this.itemName = tradePost.getItemName();

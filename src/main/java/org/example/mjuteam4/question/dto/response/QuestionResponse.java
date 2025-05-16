@@ -12,6 +12,7 @@ public class QuestionResponse{
     //member
     private Long memberId;
     private String username;
+    private String email;
 
     //question
     private Long questionId;
@@ -23,6 +24,7 @@ public class QuestionResponse{
         Member member = question.getMember();
         this.memberId = member.getId();
         this.username = member.getUsername();
+        this.email = member.getEmail();
 
         this.questionId = question.getId();
         this.title = question.getTitle();
