@@ -12,7 +12,7 @@ public class CommentResponse {
 
     private Long memberId;
     private String username;
-
+    private String email;
 
     private Long commentId;
     private String content;
@@ -23,7 +23,8 @@ public class CommentResponse {
         Member member = comment.getMember();
         memberId = member.getId();
         username = member.getUsername();
-        
+        email = member.getEmail();
+
         this.commentId = comment.getId();
         this.content = comment.getContent();
         this.likeCount = comment.getCommentLikes().size();
