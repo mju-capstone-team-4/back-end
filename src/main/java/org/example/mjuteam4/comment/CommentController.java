@@ -26,7 +26,7 @@ public class CommentController {
     ) {
         Long memberId = jwtUtil.getLoginMember().getId();
         Comment comment = commentService.commentCreate(memberId, questionId, commentRequest);
-        CommentResponse commentResponse = CommentResponse.createCommentResponse(comment);
+        CommentResponse commentResponse = CommentResponse.create(comment);
         return ResponseEntity.ok().body(commentResponse);
     }
 
@@ -36,9 +36,10 @@ public class CommentController {
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size)
     {
+        Long memberId = jwtUtil.getLoginMember().getId();
         Pageable pageable = PageRequest.of(page, size);
         Page<Comment> comments = commentService.getCommentList(questionId, pageable);
-        return comments.map(CommentResponse::createCommentResponse);
+        return comments.map(c -> CommentResponse.createWithAuthUserId(c, memberId));
     }
 
     @PutMapping("/comment/{comment_id}")
@@ -48,7 +49,7 @@ public class CommentController {
     {
         Long memberId = jwtUtil.getLoginMember().getId();
         Comment comment = commentService.commentModify(memberId, commentId, commentRequest);
-        CommentResponse commentResponse = CommentResponse.createCommentResponse(comment);
+        CommentResponse commentResponse = CommentResponse.create(comment);
         return ResponseEntity.ok().body(commentResponse);
     }
 
