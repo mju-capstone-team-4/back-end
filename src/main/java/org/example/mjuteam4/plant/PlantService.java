@@ -48,7 +48,6 @@ public class PlantService {
         try {
             ResponseEntity<String> response = restTemplate.getForEntity(uri, String.class);
             log.info("status = {}", response.getStatusCode());
-            log.info("body = {}", response.getBody());
             return response.getBody();
         } catch (Exception e) {
             log.error("API 호출 실패", e);
