@@ -59,7 +59,7 @@ public class MypageService {
     }
 
     @Transactional
-    public void registerMyPlant(RegisterMyPlantRequest request, MultipartFile file) {
+    public void registerMyPlant(RegisterMyPlantRequest request) {
         Member loginMember = jwtUtil.getLoginMember();
 
         Plant plant = plantRepository.findById(request.getPlantId())
@@ -67,9 +67,9 @@ public class MypageService {
 
         String imageUrl = "";
 
-        if (file != null && !file.isEmpty()) {
+        if (request.getImage() != null && !request.getImage().isEmpty()) {
             // 파일 저장 로직
-            imageUrl = storageService.uploadFile(file, "myplant", loginMember.getId());
+            imageUrl = storageService.uploadFile(request.getImage(), "myplant", loginMember.getId());
 
         }
         MyPlant myplant = MyPlant.builder()
