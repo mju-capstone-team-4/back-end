@@ -1,6 +1,7 @@
 package org.example.mjuteam4.mypage;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.mjuteam4.global.result.ResultCode;
 import org.example.mjuteam4.global.result.ResultResponse;
 import org.example.mjuteam4.mypage.dto.*;
@@ -17,6 +18,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 @RequestMapping("/api/mypage")
 public class MyPageController {
 
@@ -68,8 +70,13 @@ public class MyPageController {
 
     // 내 식물 등록
     @PostMapping("/myplant")
-    public ResponseEntity<ResultResponse> registerMyPlant(@ModelAttribute RegisterMyPlantRequest registerMyPlantRequest) {
-        mypageService.registerMyPlant(registerMyPlantRequest);
+    public ResponseEntity<ResultResponse> registerMyPlant(@ModelAttribute RegisterMyPlantRequest request) {
+        log.info("name: {}", request.getName());
+        log.info("description: {}", request.getDescription());
+        log.info("plantId: {}", request.getPlantId());
+        log.info("recommendTonic: {}", request.isRecommendTonic());
+        log.info("image: {}", request.getImage().getOriginalFilename());
+        mypageService.registerMyPlant(request);
         return ResponseEntity.ok().body(ResultResponse.of(ResultCode.REGISTER_MYPLANT_SUCCESS));
     }
 

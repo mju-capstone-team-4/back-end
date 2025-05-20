@@ -36,6 +36,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         Member loginMember = jwtUtil.getLoginMember();
         loginMember.updateRefreshToken(refreshToken);
         memberRepository.save(loginMember);
+        log.info("udpate 된 RefreshToekn = {}", refreshToken);
         log.info("로그인 성공해서 받은 액세스 토큰 = {}", accessToken);
 
         // 첫 로그인 여부 확인
