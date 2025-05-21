@@ -3,12 +3,14 @@ package org.example.mjuteam4.disease;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.mjuteam4.disease.dto.ClientDiseaseResponse;
-import org.example.mjuteam4.disease.dto.DiseaseRequest;
-import org.example.mjuteam4.disease.dto.DiseaseResponse;
+import org.example.mjuteam4.disease.dto.aiServer.AiServerRequest;
+import org.example.mjuteam4.disease.entity.Disease;
 import org.example.mjuteam4.global.uitl.JwtUtil;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
@@ -21,13 +23,24 @@ public class DiseaseController {
     private final DiseaseService diseaseService;
     private final JwtUtil jwtUtil;
     @PostMapping("/predict")
-    public CompletableFuture<ResponseEntity<ClientDiseaseResponse>> predict(@ModelAttribute DiseaseRequest diseaseRequest) throws IOException {
+    public CompletableFuture<ResponseEntity<ClientDiseaseResponse>> predict(@ModelAttribute AiServerRequest aiServerRequest) throws IOException {
         Long memberId = jwtUtil.getLoginMember().getId();
         log.debug("disease controller thread: " + Thread.currentThread());
-        return diseaseService.predict(diseaseRequest,memberId).thenApply(diseaseResponse -> {
+        return diseaseService.predict(aiServerRequest,memberId).thenApply(diseaseResponse -> {
             log.debug("disease controller return space thread: " + Thread.currentThread());
             return ResponseEntity.ok(diseaseResponse);
         });
+    }
 
+
+    @GetMapping("/record")
+    public ResponseEntity<Page<ClientDiseaseResponse>> getRecord(@RequestParam(value = "page", defaultValue = "0") int page,
+                                                 @RequestParam(value = "size", defaultValue = "10") int size)
+    {
+        Long memberId = jwtUtil.getLoginMember().getId();
+        Pageable pageable = PageRequest.of(page,size);
+        Page<Disease> diseaseRecord = diseaseService.getDiseaseRecord(pageable, memberId);
+        Page<ClientDiseaseResponse> response = diseaseRecord.map(ClientDiseaseResponse::createWith);
+        return ResponseEntity.ok().body(response);
     }
 }
