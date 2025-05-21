@@ -8,7 +8,7 @@ import org.example.mjuteam4.mypage.entity.MyPlant;
 @Getter
 public class MyPlantListResponse {
 
-    private Long id;
+    private Long myPlantId;
 
     private String name;
 
@@ -16,7 +16,7 @@ public class MyPlantListResponse {
 
     public static MyPlantListResponse from(MyPlant myPlant) {
         return MyPlantListResponse.builder()
-                .id(myPlant.getId())
+                .myPlantId(myPlant.getId())
                 .name(myPlant.getName())
                 .description(myPlant.getDescription())
                 .build();
