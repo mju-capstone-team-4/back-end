@@ -59,7 +59,7 @@ public class MypageService {
     }
 
     @Transactional
-    public void registerMyPlant(RegisterMyPlantRequest request) {
+    public Long registerMyPlant(RegisterMyPlantRequest request) {
         Member loginMember = jwtUtil.getLoginMember();
 
         Plant plant = plantRepository.findById(request.getPlantId())
@@ -84,7 +84,9 @@ public class MypageService {
 
         loginMember.getMyPlantList().add(myplant);
 
-        myPlantRepository.save(myplant);
+        MyPlant savePlant = myPlantRepository.save(myplant);
+
+        return savePlant.getId();
     }
 
     public List<MyPlantListResponse> getMyPlant() {

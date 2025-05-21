@@ -71,8 +71,8 @@ public class MyPageController {
     // 내 식물 등록
     @PostMapping("/myplant")
     public ResponseEntity<ResultResponse> registerMyPlant(@ModelAttribute RegisterMyPlantRequest request) {
-        mypageService.registerMyPlant(request);
-        return ResponseEntity.ok().body(ResultResponse.of(ResultCode.REGISTER_MYPLANT_SUCCESS));
+        Long myPlantId = mypageService.registerMyPlant(request);
+        return ResponseEntity.ok().body(ResultResponse.of(ResultCode.REGISTER_MYPLANT_SUCCESS, myPlantId));
     }
 
     // 내 식물 조회
