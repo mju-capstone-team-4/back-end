@@ -139,7 +139,7 @@ public class MypageService {
 
         for (Plant plant : allByName) {
             PlantsForRegisterResponse plantsForRegisterResponse = PlantsForRegisterResponse.builder()
-                    .id(plant.getId())
+                    .plantId(plant.getId())
                     .name(plant.getPlantGnrlNm())
                     .build();
 
