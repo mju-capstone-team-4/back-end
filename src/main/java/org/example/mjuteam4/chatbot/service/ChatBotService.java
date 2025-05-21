@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.mjuteam4.chatbot.dto.ChatBotRequestDto;
 import org.example.mjuteam4.chatbot.dto.ChatBotResponseDto;
-import org.example.mjuteam4.disease.dto.PrescriptionResponse;
+import org.example.mjuteam4.disease.dto.gpt.GptDiseaseResponse;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.stereotype.Service;
@@ -33,7 +33,7 @@ public class ChatBotService {
         });
     }
 
-    public PrescriptionResponse generatePrescription(String result) {
+    public GptDiseaseResponse generatePrescription(String result) {
         log.info("result: " +result);
 
         String myPrompt = "질병명: " +
@@ -57,8 +57,8 @@ public class ChatBotService {
         log.debug("AI response: {}", response);
 
         try{
-            PrescriptionResponse prescriptionResponse = objectMapper.readValue(response, PrescriptionResponse.class);
-            return prescriptionResponse;
+            GptDiseaseResponse gptDiseaseResponse = objectMapper.readValue(response, GptDiseaseResponse.class);
+            return gptDiseaseResponse;
         } catch (Exception e){
             throw new RuntimeException(e);
         }

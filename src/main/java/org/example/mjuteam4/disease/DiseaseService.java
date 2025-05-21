@@ -4,35 +4,47 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.mjuteam4.chatbot.service.ChatBotService;
 import org.example.mjuteam4.disease.dto.ClientDiseaseResponse;
-import org.example.mjuteam4.disease.dto.DiseaseRequest;
-import org.example.mjuteam4.disease.dto.DiseaseResponse;
-import org.example.mjuteam4.disease.dto.PrescriptionResponse;
+import org.example.mjuteam4.disease.dto.aiServer.AiServerRequest;
+import org.example.mjuteam4.disease.dto.aiServer.AiServerResponse;
+import org.example.mjuteam4.disease.dto.gpt.GptDiseaseResponse;
+import org.example.mjuteam4.disease.entity.Disease;
+import org.example.mjuteam4.global.uitl.JwtUtil;
+import org.example.mjuteam4.mypage.entity.Member;
+import org.example.mjuteam4.mypage.exception.MemberNotFoundException;
+import org.example.mjuteam4.mypage.repository.MemberRepository;
 import org.example.mjuteam4.storage.StorageService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class DiseaseService {
     private final ChatBotService chatBotService;
     private final StorageService storageService;
+    private final DiseaseRepository diseaseRepository;
+    private final MemberRepository memberRepository;
     private static final String AIEC2ADDRESS = "15.164.169.251";
 
     // 단일 파일 업로드 한 후 얻은 이미지 URL을 AI 서버에 전송하여 예측값을 가져온다.
-    public CompletableFuture<ClientDiseaseResponse> predict(DiseaseRequest diseaseRequest, Long memberId) throws IOException {
+    public CompletableFuture<ClientDiseaseResponse> predict(AiServerRequest aiServerRequest, Long memberId) throws IOException {
 
         return CompletableFuture.supplyAsync(() -> {
             log.debug("disease service thread: " + Thread.currentThread());
-            MultipartFile file = diseaseRequest.getFile();
-            String description = diseaseRequest.getDescription();
-            String plant = diseaseRequest.getPlant();
+            MultipartFile file = aiServerRequest.getFile();
+            String description = aiServerRequest.getDescription();
+            String plant = aiServerRequest.getPlant();
 
             // S3에 이미지 전송
             String s3ImageUrl = storageService.uploadFile(file,"disease", memberId);
@@ -49,19 +61,31 @@ public class DiseaseService {
             // 요청 전송
             RestTemplate restTemplate = new RestTemplate();
             String fastApiUrl = "http://" + AIEC2ADDRESS +  "/predict"; // "http://<EC2-퍼블릭-IP>/predict"
-            ResponseEntity<DiseaseResponse> response = restTemplate.exchange(fastApiUrl, HttpMethod.POST, requestEntity, DiseaseResponse.class);
+            ResponseEntity<AiServerResponse> response = restTemplate.exchange(fastApiUrl, HttpMethod.POST, requestEntity, AiServerResponse.class);
 
             // 307 리다이렉트 처리
             if (response.getStatusCode() == HttpStatus.TEMPORARY_REDIRECT) {
                 String newUrl = response.getHeaders().getLocation().toString(); // 새로운 URL 가져오기
-                response = restTemplate.exchange(newUrl, HttpMethod.POST, requestEntity, DiseaseResponse.class);
+                response = restTemplate.exchange(newUrl, HttpMethod.POST, requestEntity, AiServerResponse.class);
             }
 
-            DiseaseResponse diseaseResponse = response.getBody();
-            PrescriptionResponse prescriptionResponse = chatBotService.generatePrescription(diseaseResponse.getResult());
+            AiServerResponse aiServerResponse = response.getBody();
+            GptDiseaseResponse gptDiseaseResponse = chatBotService.generatePrescription(aiServerResponse.getResult());
 
-            return ClientDiseaseResponse.createWith(diseaseResponse, prescriptionResponse);
+            Disease disease = Disease.createWith(aiServerResponse, gptDiseaseResponse);
+
+            Member member = memberRepository.findWithDiseasesById(memberId).orElseThrow(MemberNotFoundException::new);
+            member.addDisease(disease);
+            diseaseRepository.save(disease);
+
+            return ClientDiseaseResponse.createWith(disease);
         });
 
     }
+
+    public Page<Disease> getDiseaseRecord(Pageable pageable, Long memberId){
+        return diseaseRepository.findByMemberId(pageable, memberId);
+    }
+
+
 }

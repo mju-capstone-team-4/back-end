@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.mjuteam4.comment.entity.Comment;
 import org.example.mjuteam4.commentLike.entity.CommentLike;
-import org.example.mjuteam4.disease.dto.Disease;
+import org.example.mjuteam4.disease.entity.Disease;
 import org.example.mjuteam4.question.entity.Question;
 import org.example.mjuteam4.tradePost.entity.TradePost;
 
@@ -95,6 +95,11 @@ public class Member {
     public void addTradePost(TradePost tradePost){
         tradePosts.add(tradePost);
         tradePost.setMember(this);
+    }
+
+    public void addDisease(Disease disease){
+        diseaseList.add(disease);
+        disease.setMember(this);
     }
 
     public void updateProfile(String url) {
