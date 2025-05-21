@@ -7,7 +7,7 @@ import lombok.Getter;
 @Builder
 public class PlantsForRegisterResponse {
 
-    private Long id;
+    private Long plantId;
 
     private String name;
 
