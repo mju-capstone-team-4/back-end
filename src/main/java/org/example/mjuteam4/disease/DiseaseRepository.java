@@ -6,5 +6,5 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface DiseaseRepository extends JpaRepository<Disease, Long> {
-    Page<Disease> findByMemberId(Pageable pageable, Long MemberId);
+    Page<Disease> findByMemberIdOrderByCreatedAtDesc(Pageable pageable, Long MemberId);
 }

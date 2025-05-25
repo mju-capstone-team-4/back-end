@@ -84,7 +84,7 @@ public class DiseaseService {
     }
 
     public Page<Disease> getDiseaseRecord(Pageable pageable, Long memberId){
-        return diseaseRepository.findByMemberId(pageable, memberId);
+        return diseaseRepository.findByMemberIdOrderByCreatedAtDesc(pageable, memberId);
     }
 
 
