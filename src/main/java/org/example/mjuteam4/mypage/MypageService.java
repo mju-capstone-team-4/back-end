@@ -141,6 +141,7 @@ public class MypageService {
             PlantsForRegisterResponse plantsForRegisterResponse = PlantsForRegisterResponse.builder()
                     .plantId(plant.getId())
                     .name(plant.getPlantGnrlNm())
+                    .plantPilbkNo(plant.getPlantPilbkNo())
                     .build();
 
             plantsForRegisterResponseList.add(plantsForRegisterResponse);

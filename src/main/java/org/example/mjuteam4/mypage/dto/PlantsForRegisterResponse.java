@@ -11,4 +11,6 @@ public class PlantsForRegisterResponse {
 
     private String name;
 
+    private String plantPilbkNo; // 도감번호 (PK)
+
 }
