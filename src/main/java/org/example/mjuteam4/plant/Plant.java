@@ -31,17 +31,22 @@ public class Plant {
     private String familyKorNm;       // 과명(한글)
     private String genusKorNm;        // 속명(한글)
 
+    @Lob
     private String leafDesc;          // 잎 설명
 
     @Lob
     private String flwrDesc;          // 꽃 설명
+    @Lob
     private String fritDesc;          // 열매 설명
 
     @Lob
     private String shpe;              // 형태
+    @Lob
     private String sz;                // 크기
 
+    @Lob
     private String grwEvrntDesc;      // 생육환경
+    @Lob
     private String dstrb;             // 분포정보
 
     @Lob

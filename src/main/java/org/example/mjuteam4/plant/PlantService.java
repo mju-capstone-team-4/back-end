@@ -8,6 +8,7 @@ import org.json.XML;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -121,15 +122,15 @@ public class PlantService {
      * 식물 도감 다 불러와서 디비에 저장
      */
 
+    @Transactional
     public void fetchAndSaveAllPlants() {
         int page = 1;
         int totalPages = 1;
-        int max = 100;
         int processed = 0;
 
         List<Future<?>> futures = new ArrayList<>();
 
-        while (page <= totalPages && processed < max) {
+        while (page <= totalPages) {
             try {
                 String baseUrl = "http://openapi.nature.go.kr/openapi/service/rest/PlantService/plntIlstrSearch";
                 String uri = UriComponentsBuilder.fromHttpUrl(baseUrl)
@@ -152,12 +153,10 @@ public class PlantService {
                 Object items = body.optJSONObject("items").opt("item");
 
                 if (items instanceof JSONObject singleItem) {
-                    if (processed >= max) break;
                     submitDetailTask(singleItem.optString("plantPilbkNo"), futures);
                     processed++;
                 } else if (items instanceof JSONArray itemArray) {
                     for (int i = 0; i < itemArray.length(); i++) {
-                        if (processed >= max) break;
                         JSONObject item = itemArray.getJSONObject(i);
                         String detailYn = item.optString("detailYn");
                         if (!"Y".equals(detailYn)) continue;
@@ -167,7 +166,7 @@ public class PlantService {
                     }
                 }
 
-                log.info("✅ {}페이지 처리 완료 (누적 요청 {}건)", page, processed);
+                log.info("✅ {}페이지 처리 완료 (누적 요청 {}건 / 총 {}건)", page, processed, totalPages * 100);
                 page++;
 
             } catch (Exception e) {
@@ -187,6 +186,7 @@ public class PlantService {
 
         executor.shutdown();
     }
+
 
     private void submitDetailTask(String plantPilbkNo, List<Future<?>> futures) {
         futures.add(executor.submit(() -> {
