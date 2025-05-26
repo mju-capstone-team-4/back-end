@@ -69,7 +69,6 @@ public class PlantService {
         try {
             ResponseEntity<String> response = restTemplate.getForEntity(uri, String.class);
             log.info("status = {}", response.getStatusCode());
-            log.info("body = {}", response.getBody());
             String responseXml = response.getBody();
 //            savePlantFromSearchOneResponse(responseXml);
             return response.getBody();
