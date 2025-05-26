@@ -124,12 +124,11 @@ public class PlantService {
     @Transactional
     public void fetchAndSaveAllPlants() {
         int page = 6;
-        int totalPages = 1;
         int processed = 0;
 
         List<Future<?>> futures = new ArrayList<>();
 
-        while (page <= totalPages) {
+        while (true) { // ✅ 조건을 while (true)로 수정
             try {
                 String baseUrl = "http://openapi.nature.go.kr/openapi/service/rest/PlantService/plntIlstrSearch";
                 String uri = UriComponentsBuilder.fromHttpUrl(baseUrl)
@@ -148,7 +147,9 @@ public class PlantService {
                 JSONObject json = new JSONObject(response.getBody());
                 JSONObject body = json.getJSONObject("response").getJSONObject("body");
 
-                totalPages = (int) Math.ceil(body.getInt("totalCount") / 100.0);
+                int totalPages = (int) Math.ceil(body.getInt("totalCount") / 100.0); // ✅ 응답 후에 계산
+                if (page > totalPages) break; // ✅ 마지막 페이지 넘으면 종료
+
                 Object items = body.optJSONObject("items").opt("item");
 
                 if (items instanceof JSONObject singleItem) {
@@ -185,6 +186,7 @@ public class PlantService {
 
         executor.shutdown();
     }
+
 
 
     private void submitDetailTask(String plantPilbkNo, List<Future<?>> futures) {
