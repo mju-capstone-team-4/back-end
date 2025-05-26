@@ -123,7 +123,7 @@ public class PlantService {
 
     @Transactional
     public void fetchAndSaveAllPlants() {
-        int page = 1;
+        int page = 6;
         int totalPages = 1;
         int processed = 0;
 
