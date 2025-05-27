@@ -14,11 +14,14 @@ public class MyPlantListResponse {
 
     private String description;
 
+    private String sampleImageUrl;
+
     public static MyPlantListResponse from(MyPlant myPlant) {
         return MyPlantListResponse.builder()
                 .myPlantId(myPlant.getId())
                 .name(myPlant.getName())
                 .description(myPlant.getDescription())
+                .sampleImageUrl(myPlant.getSampleImageUrl())
                 .build();
     }
 }

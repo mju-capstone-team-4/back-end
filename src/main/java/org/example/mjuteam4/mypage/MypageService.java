@@ -83,6 +83,7 @@ public class MypageService {
                 .description(request.getDescription())
                 .imageUrl(imageUrl)
                 .recommendTonic(request.isRecommendTonic())
+                .sampleImageUrl(plant.getImgUrl())
                 .build();
 
         loginMember.getMyPlantList().add(myplant);
