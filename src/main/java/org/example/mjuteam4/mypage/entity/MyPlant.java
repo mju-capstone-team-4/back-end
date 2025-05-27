@@ -32,6 +32,8 @@ public class MyPlant {
 
     private String imageUrl;
 
+    private String sampleImageUrl;
+
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
@@ -39,7 +41,7 @@ public class MyPlant {
     private Plant plant;
 
     @Builder
-    public MyPlant(String name, String description, LocalDate lastWateredDate, boolean recommendTonic, String imageUrl, Member member, Plant plant) {
+    public MyPlant(String name, String description, String sampleImageUrl, LocalDate lastWateredDate, boolean recommendTonic, String imageUrl, Member member, Plant plant) {
         this.name = name;
         this.description = description;
         this.lastWateredDate = lastWateredDate;
@@ -47,6 +49,7 @@ public class MyPlant {
         this.imageUrl = imageUrl;
         this.member = member;
         this.plant = plant;
+        this.sampleImageUrl = sampleImageUrl;
     }
 
     public void updateCycling(Integer waterCycle, Integer repottingCycle, Integer fertilizingCycle) {
