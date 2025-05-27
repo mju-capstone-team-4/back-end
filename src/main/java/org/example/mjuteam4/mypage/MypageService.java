@@ -62,7 +62,10 @@ public class MypageService {
     public Long registerMyPlant(RegisterMyPlantRequest request) {
         Member loginMember = jwtUtil.getLoginMember();
 
-        Plant plant = plantRepository.findById(request.getPlantId())
+        log.info("pdfld = {}", request.getPlantPilbkNo());
+        log.info("dfdjfdfdf = {}", request.getName());
+
+        Plant plant = plantRepository.findByPlantPilbkNo(request.getPlantPilbkNo())
                 .orElseThrow(() -> new GlobalException(ExceptionCode.PLANT_NOT_FOUND));
 
         String imageUrl = "";

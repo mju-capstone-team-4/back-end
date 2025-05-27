@@ -14,7 +14,7 @@ public class RegisterMyPlantRequest {
 
     private String description;
 
-    private Long plantId;
+    private String plantPilbkNo;
 
     private boolean recommendTonic;
 
