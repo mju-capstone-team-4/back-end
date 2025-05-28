@@ -37,8 +37,6 @@ public class PlantService {
     @Value("${openapi.data}")
     private String serviceKey;
 
-    @Value("${openapi.new.data}")
-    private String newServiceKey;
 
     public String search(String keyword) {
         String baseUrl = "https://apis.data.go.kr/1400119/PlantResource/plantPilbkSearch";
