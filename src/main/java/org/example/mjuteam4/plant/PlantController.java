@@ -19,9 +19,12 @@ public class PlantController {
     private final PlantService plantService;
 
     @GetMapping("/search")
-    public ResponseEntity<String> search(@RequestParam String keyword) {
+    public ResponseEntity<String> search(
+            @RequestParam String keyword,
+            @RequestParam String page
+    ) {
         log.info("search 들어옴");
-        return ResponseEntity.ok().body(plantService.search(keyword));
+        return ResponseEntity.ok().body(plantService.search(keyword, page));
     }
 
     @GetMapping("/search/{q1}")

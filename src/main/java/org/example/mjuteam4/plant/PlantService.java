@@ -42,14 +42,14 @@ public class PlantService {
     private String serviceKey;
 
 
-    public String search(String keyword) {
+    public String search(String keyword, String page) {
         String baseUrl = "https://apis.data.go.kr/1400119/PlantResource/plantPilbkSearch";
         String encodedKeyword = UriUtils.encode(keyword, StandardCharsets.UTF_8);
 
         String uriStr = baseUrl
                 + "?serviceKey=%2BQiEewXiCtFc2wzKcuiF5ZXfhmMWDsF4qhJooQgwm7qUCNBAnmSk0RnbjcxocBrLmuEvHTpyjggBzSiYERlvFw%3D%3D"
                 + "&reqSearchWrd=" + encodedKeyword
-                + "&pageNo=1"
+                + "&pageNo=" + page
                 + "&numOfRows=20";
 
         // java.net.URI 객체로 고정
