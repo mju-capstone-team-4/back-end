@@ -67,10 +67,17 @@ public class PlantService {
                 String.class
         );
 
-        // JSON 파싱
         JSONObject json = new JSONObject(response.getBody());
         JSONObject body = json.getJSONObject("response").getJSONObject("body");
-        JSONObject itemsObj = body.getJSONObject("items");
+
+        Object itemsRaw = body.get("items");
+
+        if (!(itemsRaw instanceof JSONObject)) {
+            log.warn("items가 JSONObject가 아님: {}", itemsRaw);
+            return json.toString();  // 검색 결과 없음 또는 오류 메시지 포함
+        }
+
+        JSONObject itemsObj = (JSONObject) itemsRaw;
 
         if (!itemsObj.has("item")) {
             return json.toString(); // 검색 결과 없음
@@ -78,10 +85,9 @@ public class PlantService {
 
         JSONArray items = itemsObj.getJSONArray("item");
 
-        // 각 item에 imageUrl 추가
         for (int i = 0; i < items.length(); i++) {
             JSONObject item = items.getJSONObject(i);
-            String plantPilbkNo = String.valueOf(item.get("plantPilbkNo"));  // ← 여기 중요
+            String plantPilbkNo = String.valueOf(item.get("plantPilbkNo"));
 
             Optional<Plant> plantOpt = plantRepository.findByPlantPilbkNo(plantPilbkNo);
             plantOpt.ifPresent(plant -> item.put("imageUrl", plant.getImgUrl()));
@@ -107,17 +113,22 @@ public class PlantService {
             JSONObject json = new JSONObject(response.getBody());
             JSONObject body = json.getJSONObject("response").getJSONObject("body");
 
-            if (!body.has("item")) {
-                return json.toString();  // item이 없을 경우 그대로 반환
+            // item 필드가 JSONObject인지 먼저 확인
+            Object itemRaw = body.opt("item");
+
+            if (!(itemRaw instanceof JSONObject)) {
+                log.warn("item 필드가 JSONObject가 아님: {}", itemRaw);
+                return json.toString();  // 예외 없이 원본 반환
             }
 
-            JSONObject item = body.getJSONObject("item");
+            JSONObject item = (JSONObject) itemRaw;
 
             // DB에서 imageUrl 조회
             Optional<Plant> plantOpt = plantRepository.findByPlantPilbkNo(reqPlantPilbkNo);
             plantOpt.ifPresent(plant -> item.put("imageUrl", plant.getImgUrl()));
 
             return json.toString();
+
         } catch (Exception e) {
             log.error("API 호출 실패", e);
             throw e;
