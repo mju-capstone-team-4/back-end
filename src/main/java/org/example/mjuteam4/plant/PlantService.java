@@ -1,25 +1,29 @@
 package org.example.mjuteam4.plant;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.mjuteam4.plant.dto.SearchPlantByImageRequest;
+import org.example.mjuteam4.plant.dto.SearchPlantByImageResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.XML;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.web.util.UriUtils;
 
+import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -33,6 +37,9 @@ public class PlantService {
     private final RestTemplate restTemplate = new RestTemplate();
     private final PlantRepository plantRepository;
     private final ExecutorService executor = Executors.newFixedThreadPool(10);
+
+    @Value("${gpt.api-key}")
+    private String gptKey;
 
     @Value("${openapi.data}")
     private String serviceKey;
@@ -230,4 +237,70 @@ public class PlantService {
         }
     }
 
+    public SearchPlantByImageResponse searchImage(SearchPlantByImageRequest searchPlantByImageRequest) {
+
+        log.info("file = {}", searchPlantByImageRequest.getFile());
+
+        MultipartFile file = searchPlantByImageRequest.getFile();
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            // 1. MultipartFile → Base64 인코딩
+            byte[] imageBytes = file.getBytes();
+            String base64Image = Base64.getEncoder().encodeToString(imageBytes);
+
+            // 2. 프롬프트 작성
+            String prompt = "아래 이미지는 식물입니다. 이 식물의 이름을 알려주세요. " +
+                    "아래와 같은 JSON 형태로만 응답해주세요:\n" +
+                    "{ \"plantName\": \"식물명\"} " +
+                    "마크다운 기호나 설명 없이 순수 JSON으로만 응답하세요.";
+
+            // 3. OpenAI Vision API 호출 요청 구성
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.setBearerAuth(gptKey);
+
+            Map<String, Object> imageMap = Map.of(
+                    "type", "image_url",
+                    "image_url", Map.of("url", "data:image/jpeg;base64," + base64Image)
+            );
+
+            Map<String, Object> textMap = Map.of(
+                    "type", "text",
+                    "text", prompt
+            );
+
+            Map<String, Object> message = Map.of(
+                    "role", "user",
+                    "content", List.of(textMap, imageMap)
+            );
+
+            Map<String, Object> request = Map.of(
+                    "model", "gpt-4o",
+                    "messages", List.of(message),
+                    "max_tokens", 500
+            );
+
+            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(request, headers);
+
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<String> response = restTemplate.postForEntity(
+                    "https://api.openai.com/v1/chat/completions",
+                    entity,
+                    String.class
+            );
+
+            // 4. 응답 처리 및 파싱
+            String content = objectMapper.readTree(response.getBody())
+                    .get("choices").get(0).get("message").get("content").asText();
+
+            SearchPlantByImageResponse result = objectMapper.readValue(content, SearchPlantByImageResponse.class);
+            log.info("식물 이름: {}", result.getPlantName());
+            return result;
+
+        } catch (IOException e) {
+            throw new RuntimeException("이미지 인코딩 실패", e);
+        } catch (Exception e) {
+            throw new RuntimeException("OpenAI 응답 파싱 실패", e);
+        }
+    }
 }

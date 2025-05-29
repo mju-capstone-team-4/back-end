@@ -3,6 +3,8 @@ package org.example.mjuteam4.plant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.mjuteam4.plant.dto.PlantCollectionResponse;
+import org.example.mjuteam4.plant.dto.SearchPlantByImageRequest;
+import org.example.mjuteam4.plant.dto.SearchPlantByImageResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +39,11 @@ public class PlantController {
     public String saveAllPlants() {
         plantService.fetchAndSaveAllPlants();
         return "✅ 전체 저장 요청 완료";
+    }
+
+    @PostMapping("/search/image")
+    public ResponseEntity<SearchPlantByImageResponse> searchImage(@ModelAttribute SearchPlantByImageRequest searchPlantByImageRequest) {
+        return ResponseEntity.ok().body(plantService.searchImage(searchPlantByImageRequest));
     }
 
 }
