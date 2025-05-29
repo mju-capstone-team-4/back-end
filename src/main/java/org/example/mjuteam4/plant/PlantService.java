@@ -20,10 +20,7 @@ import org.springframework.web.util.UriUtils;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -70,7 +67,27 @@ public class PlantService {
                 String.class
         );
 
-        return response.getBody();
+        // JSON 파싱
+        JSONObject json = new JSONObject(response.getBody());
+        JSONObject body = json.getJSONObject("response").getJSONObject("body");
+        JSONObject itemsObj = body.getJSONObject("items");
+
+        if (!itemsObj.has("item")) {
+            return json.toString(); // 검색 결과 없음
+        }
+
+        JSONArray items = itemsObj.getJSONArray("item");
+
+        // 각 item에 imageUrl 추가
+        for (int i = 0; i < items.length(); i++) {
+            JSONObject item = items.getJSONObject(i);
+            String plantPilbkNo = String.valueOf(item.get("plantPilbkNo"));  // ← 여기 중요
+
+            Optional<Plant> plantOpt = plantRepository.findByPlantPilbkNo(plantPilbkNo);
+            plantOpt.ifPresent(plant -> item.put("imageUrl", plant.getImgUrl()));
+        }
+
+        return json.toString();
     }
 
 
@@ -86,7 +103,21 @@ public class PlantService {
         try {
             ResponseEntity<String> response = restTemplate.getForEntity(uri, String.class);
             log.info("status = {}", response.getStatusCode());
-            return response.getBody();
+            // JSON 파싱
+            JSONObject json = new JSONObject(response.getBody());
+            JSONObject body = json.getJSONObject("response").getJSONObject("body");
+
+            if (!body.has("item")) {
+                return json.toString();  // item이 없을 경우 그대로 반환
+            }
+
+            JSONObject item = body.getJSONObject("item");
+
+            // DB에서 imageUrl 조회
+            Optional<Plant> plantOpt = plantRepository.findByPlantPilbkNo(reqPlantPilbkNo);
+            plantOpt.ifPresent(plant -> item.put("imageUrl", plant.getImgUrl()));
+
+            return json.toString();
         } catch (Exception e) {
             log.error("API 호출 실패", e);
             throw e;
