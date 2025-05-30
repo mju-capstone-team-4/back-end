@@ -53,6 +53,9 @@ public class DiseaseService {
             HashMap<String, String> requestBody = new HashMap<>();
             requestBody.put("image_url", s3ImageUrl);
 
+            // 식물 종류 추가
+            requestBody.put("crop", plant);
+
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
