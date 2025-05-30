@@ -35,7 +35,7 @@ public class DiseaseService {
     private final StorageService storageService;
     private final DiseaseRepository diseaseRepository;
     private final MemberRepository memberRepository;
-    private static final String AIEC2ADDRESS = "15.164.169.251";
+    private static final String AIEC2ADDRESS = "15.164.98.30";
 
     // 단일 파일 업로드 한 후 얻은 이미지 URL을 AI 서버에 전송하여 예측값을 가져온다.
     public CompletableFuture<ClientDiseaseResponse> predict(AiServerRequest aiServerRequest, Long memberId) throws IOException {
