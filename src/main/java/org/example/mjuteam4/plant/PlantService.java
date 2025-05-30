@@ -83,15 +83,28 @@ public class PlantService {
             return json.toString(); // 검색 결과 없음
         }
 
-        JSONArray items = itemsObj.getJSONArray("item");
+        Object itemRaw = itemsObj.get("item");
 
-        for (int i = 0; i < items.length(); i++) {
-            JSONObject item = items.getJSONObject(i);
+        if (itemRaw instanceof JSONArray) {
+            JSONArray items = (JSONArray) itemRaw;
+
+            for (int i = 0; i < items.length(); i++) {
+                JSONObject item = items.getJSONObject(i);
+                String plantPilbkNo = String.valueOf(item.get("plantPilbkNo"));
+                Optional<Plant> plantOpt = plantRepository.findByPlantPilbkNo(plantPilbkNo);
+                plantOpt.ifPresent(plant -> item.put("imageUrl", plant.getImgUrl()));
+            }
+
+        } else if (itemRaw instanceof JSONObject) {
+            JSONObject item = (JSONObject) itemRaw;
             String plantPilbkNo = String.valueOf(item.get("plantPilbkNo"));
-
             Optional<Plant> plantOpt = plantRepository.findByPlantPilbkNo(plantPilbkNo);
             plantOpt.ifPresent(plant -> item.put("imageUrl", plant.getImgUrl()));
+
+            // 다시 JSONArray로 만들어서 덮어씀 (형 일치 보장)
+            itemsObj.put("item", new JSONArray().put(item));
         }
+
 
         return json.toString();
     }
