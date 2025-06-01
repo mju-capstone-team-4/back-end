@@ -56,9 +56,7 @@ public class TokenProvider {
     }
 
     public String generateAccessToken(Authentication authentication) {
-        log.info("authentication = {}", authentication.getName());
         String accessToken = generateToken(authentication, ACCESS_TOKEN_EXPIRE_TIME);
-        log.info("access token = {}", accessToken);
         tokenService.saveAccessToken(accessToken);
         return accessToken;
     }
@@ -113,6 +111,7 @@ public class TokenProvider {
 
         // 사용자 ID (subject) 추출
         String email = claims.getSubject();
+        log.info("getAuthentication email = {}", email);
 
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(MemberNotFoundException::new);
@@ -124,7 +123,7 @@ public class TokenProvider {
 
         // Security의 User 객체 생성
         User principal = new User(email, "", authorities);
-        return new UsernamePasswordAuthenticationToken(principal, token, authorities);
+        return new UsernamePasswordAuthenticationToken(email, null, authorities);
     }
 
     private List<SimpleGrantedAuthority> getAuthorities(Claims claims) {
