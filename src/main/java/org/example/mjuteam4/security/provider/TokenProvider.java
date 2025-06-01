@@ -90,6 +90,8 @@ public class TokenProvider {
         Member member = memberRepository.findByUsername(name)
                 .orElseThrow(() -> new GlobalException(ExceptionCode.MEMBER_NOT_FOUND));
 
+        log.info("generateToken email = {}", member.getEmail());
+
         String role = member.getRole().name(); // Optional 사용 불필요
 
         log.info("Authentication Authorities: {}", authentication.getAuthorities());
