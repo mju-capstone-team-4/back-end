@@ -14,6 +14,7 @@ import org.example.mjuteam4.global.uitl.JwtUtil;
 import org.example.mjuteam4.mypage.entity.Member;
 import org.example.mjuteam4.mypage.repository.MemberRepository;
 import org.example.mjuteam4.mypage.exception.MemberNotFoundException;
+import org.example.mjuteam4.mypage.security.PrincipalDetails;
 import org.example.mjuteam4.redis.TokenRepository;
 import org.example.mjuteam4.redis.TokenService;
 import org.example.mjuteam4.redis.exception.JwtSignatureInvalidException;
@@ -106,6 +107,21 @@ public class TokenProvider {
         return jwt;
     }
 
+    public String extractEmail(Authentication authentication) {
+        Object principal = authentication.getPrincipal();
+
+        if (principal instanceof org.springframework.security.core.userdetails.User user) {
+            return user.getUsername(); // 일반 로그인 or JWT
+        } else if (principal instanceof PrincipalDetails pd) {
+            return pd.getEmail(); // 소셜 로그인
+        } else if (principal instanceof String str) {
+            return str; // 테스트 토큰에서 직접 email 넣은 경우
+        } else {
+            throw new IllegalStateException("알 수 없는 principal 타입");
+        }
+    }
+
+
     public Authentication getAuthentication(String token) {
         Claims claims = parseClaims(token);
 
@@ -123,7 +139,7 @@ public class TokenProvider {
 
         // Security의 User 객체 생성
         User principal = new User(email, "", authorities);
-        return new UsernamePasswordAuthenticationToken(email, null, authorities);
+        return new UsernamePasswordAuthenticationToken(principal, null, authorities);
 
     }
 

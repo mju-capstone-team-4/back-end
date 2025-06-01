@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.mjuteam4.mypage.entity.Member;
 import org.example.mjuteam4.mypage.repository.MemberRepository;
 import org.example.mjuteam4.mypage.exception.MemberNotFoundException;
+import org.example.mjuteam4.security.provider.TokenProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 public class JwtUtil {
 
     private final MemberRepository memberRepository;
+    private final TokenProvider tokenProvider;
 
 
     /**
@@ -25,10 +27,10 @@ public class JwtUtil {
      */
     public Member getLoginMember(){
 
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        System.out.println("jwtutil: " + email);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = tokenProvider.extractEmail(authentication);
+
+        log.info(" jwtUtil의 email = {}", email);
         return memberRepository.findByEmail(email)
                 .orElseThrow(MemberNotFoundException::new);
     }

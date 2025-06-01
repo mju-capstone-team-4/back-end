@@ -34,7 +34,6 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         return path.equals("/auth/login")
                 || path.startsWith("/oauth2")
                 || path.equals("/rank")
-                || path.equals("/auth/success")
                 || path.startsWith("/api/mypage/token")
                 || path.equals("/connect");
     }
