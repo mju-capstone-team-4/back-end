@@ -8,6 +8,8 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.mjuteam4.global.exception.ExceptionCode;
+import org.example.mjuteam4.global.exception.GlobalException;
 import org.example.mjuteam4.global.uitl.JwtUtil;
 import org.example.mjuteam4.mypage.entity.Member;
 import org.example.mjuteam4.mypage.repository.MemberRepository;
@@ -83,17 +85,17 @@ public class TokenProvider {
         Date now = new Date();
         Date expiredDate = new Date(now.getTime() + expireTime);
 
-        String email = authentication.getName();
-        log.info("email = {}", email);
+        String name = authentication.getName();
 
-        Optional<Member> optionalMember = memberRepository.findByEmail(email);
-        String role = optionalMember.map(member -> member.getRole().name()).orElse("ROLE_USER");
+        Member member = memberRepository.findByUsername(name)
+                .orElseThrow(() -> new GlobalException(ExceptionCode.MEMBER_NOT_FOUND));
 
+        String role = member.getRole().name(); // Optional 사용 불필요
 
         log.info("Authentication Authorities: {}", authentication.getAuthorities());
 
         String jwt = Jwts.builder()
-                .subject(authentication.getName())
+                .subject(member.getEmail())
                 .issuedAt(now)
                 .claim(KEY_ROLE, role) // Role을 Claim에 추가
                 .expiration(expiredDate)
@@ -114,7 +116,6 @@ public class TokenProvider {
                 .orElseThrow(MemberNotFoundException::new);
 
         String role = member.getRole().name();
-
 
         // 권한 정보를 고정값으로 설정 ("USER")
         List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role));
