@@ -45,6 +45,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
         try {
             String accessToken = resolveToken(request);
+            log.info("url = {}", request.getRequestURL());
             log.info("Access token: {}", accessToken);
 
             if (StringUtils.hasText(accessToken)) {
