@@ -2,7 +2,6 @@ package org.example.mjuteam4.config.security;
 
 import lombok.RequiredArgsConstructor;
 import org.example.mjuteam4.mypage.security.OAuth2MemberService;
-import org.example.mjuteam4.security.filter.JwtAuthenticationFilter;
 import org.example.mjuteam4.security.filter.TokenAuthenticationFilter;
 import org.example.mjuteam4.security.filter.JwtExceptionHandlingFilter;
 import org.example.mjuteam4.security.handler.CustomAccessDeniedHandler;
@@ -88,7 +87,6 @@ public class SecurityConfig {
                 )
 
                 .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-//                .addFilterBefore(new JwtAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtExceptionHandlingFilter(), UsernamePasswordAuthenticationFilter.class)
 
                 // 인증 예외 핸들링

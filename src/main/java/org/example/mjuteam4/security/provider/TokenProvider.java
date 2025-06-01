@@ -123,7 +123,7 @@ public class TokenProvider {
 
         // Security의 User 객체 생성
         User principal = new User(email, "", authorities);
-        return new UsernamePasswordAuthenticationToken(email, null, authorities);
+        return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }
 
     private List<SimpleGrantedAuthority> getAuthorities(Claims claims) {
