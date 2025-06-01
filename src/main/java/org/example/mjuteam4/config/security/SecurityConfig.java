@@ -71,10 +71,16 @@ public class SecurityConfig {
                         c.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 사용하지 않음
 
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers( "/**").permitAll() // OPTIONS 요청 허용
-                        .requestMatchers(new AntPathRequestMatcher("/**")).permitAll()
-                        .anyRequest().authenticated() // 나머지 요청은 인증 필요
-                )
+                        .requestMatchers(
+                                "/oauth2/**",
+                                "/auth/login",
+                                "/auth/success",
+                                "/rank",
+                                "/connect",
+                                "/api/mypage/token/**"
+                        ).permitAll() // 인증 없이 접근 허용할 경로들
+                        .anyRequest().authenticated()
+                )// 그 외는 인증 필요
 //                 oauth2 설정
                 .oauth2Login(oauth -> // OAuth2 로그인 기능에 대한 여러 설정의 진입점
                         oauth.userInfoEndpoint(c -> c.userService(oAuth2MemberService))
@@ -82,7 +88,7 @@ public class SecurityConfig {
                 )
 
                 .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new JwtAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
+//                .addFilterBefore(new JwtAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtExceptionHandlingFilter(), UsernamePasswordAuthenticationFilter.class)
 
                 // 인증 예외 핸들링
