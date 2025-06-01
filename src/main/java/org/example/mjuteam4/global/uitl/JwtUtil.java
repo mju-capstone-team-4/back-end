@@ -25,11 +25,11 @@ public class JwtUtil {
      */
     public Member getLoginMember(){
 
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        String usernmae = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        System.out.println("jwtutil: " + email);
+        System.out.println("jwtutil: " + usernmae);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return memberRepository.findByEmail(email)
+        return memberRepository.findByUsername(usernmae)
                 .orElseThrow(MemberNotFoundException::new);
     }
 }
