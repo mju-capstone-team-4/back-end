@@ -3,7 +3,6 @@ package org.example.mjuteam4.config.security;
 import lombok.RequiredArgsConstructor;
 import org.example.mjuteam4.mypage.security.OAuth2MemberService;
 import org.example.mjuteam4.security.filter.TokenAuthenticationFilter;
-import org.example.mjuteam4.security.filter.JwtExceptionHandlingFilter;
 import org.example.mjuteam4.security.handler.CustomAccessDeniedHandler;
 import org.example.mjuteam4.security.handler.CustomAuthenticationEntryPoint;
 import org.example.mjuteam4.security.handler.OAuth2SuccessHandler;
@@ -19,7 +18,6 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
@@ -87,7 +85,6 @@ public class SecurityConfig {
                 )
 
                 .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new JwtExceptionHandlingFilter(), UsernamePasswordAuthenticationFilter.class)
 
                 // 인증 예외 핸들링
                 .exceptionHandling((exceptions) -> exceptions
