@@ -1,5 +1,6 @@
 package org.example.mjuteam4.config.security;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.example.mjuteam4.mypage.security.OAuth2MemberService;
 import org.example.mjuteam4.security.filter.TokenAuthenticationFilter;
@@ -16,6 +17,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -36,6 +38,12 @@ public class SecurityConfig {
     public WebSecurityCustomizer webSecurityCustomizer() { // security를 적용하지 않을 리소스
         return web -> web.ignoring()
                 .requestMatchers("/error", "/favicon.ico", "/api-docs", "swagger-ui/**", "/connect");
+    }
+
+    @PostConstruct
+    public void enableAsyncSecurityContextPropagation() {
+        SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
+        System.out.println("SecurityContextHolder strategy set to: " + SecurityContextHolder.getContextHolderStrategy()); // 확인용 로그
     }
 
     @Bean
