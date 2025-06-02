@@ -16,6 +16,7 @@ import org.example.mjuteam4.storage.StorageService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -41,6 +42,7 @@ public class DiseaseService {
     private final JwtUtil jwtUtil;
 
     // 단일 파일 업로드 한 후 얻은 이미지 URL을 AI 서버에 전송하여 예측값을 가져온다.
+    @Async
     public CompletableFuture<ClientDiseaseResponse> predict(AiServerRequest aiServerRequest, Long memberId) throws IOException {// 👈 현재 인증 정보 저장
 
         return CompletableFuture.supplyAsync(() -> {
