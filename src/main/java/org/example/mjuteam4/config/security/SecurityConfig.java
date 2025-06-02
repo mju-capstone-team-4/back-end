@@ -74,7 +74,8 @@ public class SecurityConfig {
                                 "/auth/success",
                                 "/rank",
                                 "/connect",
-                                "/api/mypage/token/**"
+                                "/api/mypage/token/**",
+                                "/predict"
                         ).permitAll() // 인증 없이 접근 허용할 경로들
                         .anyRequest().authenticated()
                 )// 그 외는 인증 필요
