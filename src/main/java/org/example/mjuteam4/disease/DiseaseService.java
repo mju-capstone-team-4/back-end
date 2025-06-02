@@ -77,6 +77,8 @@ public class DiseaseService {
                 response = restTemplate.exchange(newUrl, HttpMethod.POST, requestEntity, AiServerResponse.class);
             }
 
+            log.info("[resposne status code] = {}", response.getStatusCode());
+
             AiServerResponse aiServerResponse = response.getBody();
             GptDiseaseResponse gptDiseaseResponse = chatBotService.generatePrescription(aiServerResponse.getResult());
 
