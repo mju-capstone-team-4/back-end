@@ -19,8 +19,8 @@ public class ChatBotService {
     private final ChatClient chatClient;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public CompletableFuture<ChatBotResponseDto> chatJson(ChatBotRequestDto chatBotRequestDto) {
-        return CompletableFuture.supplyAsync(() -> {
+    public ChatBotResponseDto chatJson(ChatBotRequestDto chatBotRequestDto) {
+
             return chatClient.prompt()
                     .user(chatBotRequestDto.getMessage())
                     .options(OpenAiChatOptions.builder()
@@ -30,7 +30,7 @@ public class ChatBotService {
                             .build())
                     .call()
                     .entity(ChatBotResponseDto.class);
-        });
+
     }
 
     public GptDiseaseResponse generatePrescription(String result) {
