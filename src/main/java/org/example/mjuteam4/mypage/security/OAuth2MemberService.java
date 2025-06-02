@@ -41,7 +41,7 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
                     return memberRepository.save(oAuth2UserInfo.toMember());
                 });
 
-        return new PrincipalDetails(member, userAttribute, userNameAttributeName, isFirstLogin.get());
+        return new PrincipalDetails(member, userAttribute, userNameAttributeName);
     }
 }
 
