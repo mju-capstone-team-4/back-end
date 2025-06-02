@@ -30,7 +30,7 @@ public class DiseaseController {
         return diseaseService.predict(aiServerRequest,memberId).thenApply(diseaseResponse -> {
             log.debug("disease controller return space thread: " + Thread.currentThread());
             log.debug("predict memberId before return response: {}", memberId);
-            return ResponseEntity.ok(diseaseResponse);
+            return ResponseEntity.ok().body(diseaseResponse);
         });
     }
 
