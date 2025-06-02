@@ -29,26 +29,25 @@ public class DiseaseController {
     @PostMapping("/predict")
     public CompletableFuture<ResponseEntity<ClientDiseaseResponse>> predict(@ModelAttribute AiServerRequest aiServerRequest) throws IOException {
         Long memberId = jwtUtil.getLoginMember().getId();
-        SecurityContext context = SecurityContextHolder.getContext(); // 이 시점에 복사
+        SecurityContext context = SecurityContextHolder.getContext();
 
-        log.debug("predict memberId: {}", memberId);
-        log.debug("disease controller thread: " + Thread.currentThread());
         return diseaseService.predict(aiServerRequest, memberId)
-                .thenApply(diseaseResponse -> {
+                .handle((result, ex) -> {
                     SecurityContextHolder.setContext(context);
+
+                    if (ex != null) {
+                        log.error(" 예외 발생 - AuthenticationEntryPoint 방지용", ex);
+                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                .body(null); // 또는 Error DTO
+                    }
 
                     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
                     log.info("응답 직전 인증 정보: {}", auth);
 
-                    return ResponseEntity.ok(diseaseResponse);
-                })
-                .exceptionally(ex -> {
-                    log.error(" 예외 발생 - 응답 덮어쓰기 방지: {}", ex.getMessage(), ex);
-                    // 여기서 직접 500이나 400 등으로 응답
-                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                            .body(null); // 또는 커스텀 에러 DTO
+                    return ResponseEntity.ok(result);
                 });
     }
+
 
 
     @GetMapping("/record")
