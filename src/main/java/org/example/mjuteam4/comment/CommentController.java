@@ -1,6 +1,7 @@
 package org.example.mjuteam4.comment;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.mjuteam4.comment.dto.request.CommentRequest;
 import org.example.mjuteam4.comment.dto.response.CommentResponse;
 import org.example.mjuteam4.comment.entity.Comment;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api")
 public class CommentController {
@@ -24,6 +26,7 @@ public class CommentController {
             @PathVariable(value = "question_id") Long questionId,
             @RequestBody CommentRequest commentRequest
     ) {
+        log.debug("create comment: {}", commentRequest.getComment());
         Long memberId = jwtUtil.getLoginMember().getId();
         Comment comment = commentService.commentCreate(memberId, questionId, commentRequest);
         CommentResponse commentResponse = CommentResponse.create(comment);
