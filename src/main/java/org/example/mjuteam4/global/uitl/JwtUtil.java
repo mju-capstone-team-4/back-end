@@ -17,8 +17,6 @@ import org.springframework.stereotype.Component;
 public class JwtUtil {
 
     private final MemberRepository memberRepository;
-    private final TokenProvider tokenProvider;
-
 
     /**
      * 현재 로그인 관련 코드가 구현이 안되어있어서 username이 "testUser"라는 유저를 가지고옴.
