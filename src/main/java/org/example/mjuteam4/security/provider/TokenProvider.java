@@ -42,8 +42,8 @@ public class TokenProvider {
     @Value("${jwt.key}")
     private String key;
     private SecretKey secretKey;
-    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24L; // 하루
-    private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7L; // 1주일
+    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7 * 30L; // 한달
+    private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7 * 30L; // 한달
 
     private final TokenService tokenService;
     private static final String KEY_ROLE = "role"; // JWT의 역할(ROLE) 클레임 키
