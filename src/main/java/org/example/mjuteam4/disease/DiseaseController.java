@@ -25,9 +25,11 @@ public class DiseaseController {
     @PostMapping("/predict")
     public CompletableFuture<ResponseEntity<ClientDiseaseResponse>> predict(@ModelAttribute AiServerRequest aiServerRequest) throws IOException {
         Long memberId = jwtUtil.getLoginMember().getId();
+        log.debug("predict memberId: {}", memberId);
         log.debug("disease controller thread: " + Thread.currentThread());
         return diseaseService.predict(aiServerRequest,memberId).thenApply(diseaseResponse -> {
             log.debug("disease controller return space thread: " + Thread.currentThread());
+            log.debug("predict memberId before return response: {}", memberId);
             return ResponseEntity.ok(diseaseResponse);
         });
     }
