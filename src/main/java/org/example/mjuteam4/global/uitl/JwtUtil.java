@@ -33,7 +33,10 @@ public class JwtUtil {
             log.info("email = {}", email);
             return memberRepository.findByEmail(email)
                     .orElseThrow(MemberNotFoundException::new);
+        } else {
+            String email = SecurityContextHolder.getContext().getAuthentication().getName();
+            return memberRepository.findByEmail(email)
+                    .orElseThrow(MemberNotFoundException::new);
         }
-        return null;
     }
 }
