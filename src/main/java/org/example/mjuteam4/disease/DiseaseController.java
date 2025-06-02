@@ -9,6 +9,7 @@ import org.example.mjuteam4.global.uitl.JwtUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -32,18 +33,21 @@ public class DiseaseController {
 
         log.debug("predict memberId: {}", memberId);
         log.debug("disease controller thread: " + Thread.currentThread());
-        return diseaseService.predict(aiServerRequest,memberId).thenApply(diseaseResponse -> {
-            SecurityContextHolder.setContext(context);
+        return diseaseService.predict(aiServerRequest, memberId)
+                .thenApply(diseaseResponse -> {
+                    SecurityContextHolder.setContext(context);
 
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            log.info("응답 직전 인증 정보: {}", auth);
+                    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                    log.info("응답 직전 인증 정보: {}", auth);
 
-
-            log.debug("disease controller return space thread: " + Thread.currentThread());
-            log.debug("predict memberId before return response: {}", memberId);
-            log.debug("diseaseResponse= {}", diseaseResponse);
-            return ResponseEntity.ok(diseaseResponse);
-        });
+                    return ResponseEntity.ok(diseaseResponse);
+                })
+                .exceptionally(ex -> {
+                    log.error(" 예외 발생 - 응답 덮어쓰기 방지: {}", ex.getMessage(), ex);
+                    // 여기서 직접 500이나 400 등으로 응답
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body(null); // 또는 커스텀 에러 DTO
+                });
     }
 
 
