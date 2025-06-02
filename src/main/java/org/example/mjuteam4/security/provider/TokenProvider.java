@@ -63,6 +63,39 @@ public class TokenProvider {
         return generateToken(authentication, REFRESH_TOKEN_EXPIRE_TIME);
     }
 
+    public String generateTestAccessToken(Authentication authentication) {
+        String accessToken = generateTestToken(authentication, ACCESS_TOKEN_EXPIRE_TIME);
+        tokenService.saveAccessToken(accessToken);
+        return accessToken;
+    }
+
+    private String generateTestToken(Authentication authentication, long expireTime) {
+        Date now = new Date();
+        Date expiredDate = new Date(now.getTime() + expireTime);
+
+        String name = authentication.getName();
+
+        Member member = memberRepository.findByEmail(name)
+                .orElseThrow(() -> new GlobalException(ExceptionCode.MEMBER_NOT_FOUND));
+
+        log.info("generateToken email = {}", member.getEmail());
+
+        String role = member.getRole().name(); // Optional 사용 불필요
+
+        log.info("Authentication Authorities: {}", authentication.getAuthorities());
+
+        String jwt = Jwts.builder()
+                .subject(member.getEmail())
+                .issuedAt(now)
+                .claim(KEY_ROLE, role) // Role을 Claim에 추가
+                .expiration(expiredDate)
+                .signWith(secretKey, Jwts.SIG.HS512)
+                .compact();
+
+        log.info("jwt = {}", jwt);
+        return jwt;
+    }
+
     public String getTestToken(String email) {
         Date now = new Date();
         Date expiredDate = new Date(now.getTime() + 1231233);
@@ -74,7 +107,7 @@ public class TokenProvider {
         Authentication authentication = new UsernamePasswordAuthenticationToken(email, null, authorities);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        return generateAccessToken(authentication);
+        return generateTestAccessToken(authentication);
     }
 
     private String generateToken(Authentication authentication, long expireTime) {
