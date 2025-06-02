@@ -109,7 +109,7 @@ public class ChatService {
         log.debug("chatRoom: " + chatRoom.getName());
 
         log.debug("name is {}", name);
-        Member member = memberRepository.findByEmail(name).orElseThrow(MemberNotFoundException::new);
+        Member member = memberRepository.findByUsername(name).orElseThrow(MemberNotFoundException::new);
         log.debug("member: " + member.getUsername());
 
         List<ChatParticipant> chatParticipants = chatParticipantRepository.findByChatRoom(chatRoom);
