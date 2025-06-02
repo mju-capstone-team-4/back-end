@@ -27,25 +27,10 @@ public class DiseaseController {
     private final DiseaseService diseaseService;
     private final JwtUtil jwtUtil;
     @PostMapping("/predict")
-    public CompletableFuture<ResponseEntity<ClientDiseaseResponse>> predict(@ModelAttribute AiServerRequest aiServerRequest) throws IOException {
+    public ResponseEntity<ClientDiseaseResponse> predict(@ModelAttribute AiServerRequest aiServerRequest) throws IOException {
         Long memberId = jwtUtil.getLoginMember().getId();
-        SecurityContext context = SecurityContextHolder.getContext();
-
-        return diseaseService.predict(aiServerRequest, memberId)
-                .handle((result, ex) -> {
-                    SecurityContextHolder.setContext(context);
-
-                    if (ex != null) {
-                        log.error(" 예외 발생 - AuthenticationEntryPoint 방지용", ex);
-                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                                .body(null); // 또는 Error DTO
-                    }
-
-                    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-                    log.info("응답 직전 인증 정보: {}", auth);
-
-                    return ResponseEntity.ok(result);
-                });
+        ClientDiseaseResponse response = diseaseService.predict(aiServerRequest, memberId);
+        return ResponseEntity.ok().body(response);
     }
 
 

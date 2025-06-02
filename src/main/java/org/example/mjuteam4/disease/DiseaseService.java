@@ -42,56 +42,55 @@ public class DiseaseService {
     private final JwtUtil jwtUtil;
 
     // 단일 파일 업로드 한 후 얻은 이미지 URL을 AI 서버에 전송하여 예측값을 가져온다.
-    @Async
-    public CompletableFuture<ClientDiseaseResponse> predict(AiServerRequest aiServerRequest, Long memberId) throws IOException {// 👈 현재 인증 정보 저장
 
-        return CompletableFuture.supplyAsync(() -> {
-            log.debug("disease service thread: " + Thread.currentThread());
-            MultipartFile file = aiServerRequest.getFile();
-            String description = aiServerRequest.getDescription();
-            String plant = aiServerRequest.getPlant();
-
-            // S3에 이미지 전송
-            String s3ImageUrl = storageService.uploadFile(file,"disease", memberId);
-
-            // AI 서버로 전송할 요청 생성
-            HashMap<String, String> requestBody = new HashMap<>();
-            requestBody.put("image_url", s3ImageUrl);
-
-            // 식물 종류 추가
-            log.debug("target crop: {}", plant);
-            requestBody.put("crop", plant);
+    public ClientDiseaseResponse predict(AiServerRequest aiServerRequest, Long memberId) throws IOException {// 👈 현재 인증 정보 저장
 
 
-            HttpHeaders httpHeaders = new HttpHeaders();
-            httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        log.debug("disease service thread: " + Thread.currentThread());
+        MultipartFile file = aiServerRequest.getFile();
+        String description = aiServerRequest.getDescription();
+        String plant = aiServerRequest.getPlant();
 
-            HttpEntity<HashMap<String, String>> requestEntity = new HttpEntity<>(requestBody, httpHeaders);
+        // S3에 이미지 전송
+        String s3ImageUrl = storageService.uploadFile(file,"disease", memberId);
 
-            // 요청 전송
-            RestTemplate restTemplate = new RestTemplate();
-            String fastApiUrl = "http://" + AIEC2ADDRESS +  "/predict"; // "http://<EC2-퍼블릭-IP>/predict"
-            ResponseEntity<AiServerResponse> response = restTemplate.exchange(fastApiUrl, HttpMethod.POST, requestEntity, AiServerResponse.class);
+        // AI 서버로 전송할 요청 생성
+        HashMap<String, String> requestBody = new HashMap<>();
+        requestBody.put("image_url", s3ImageUrl);
 
-            // 307 리다이렉트 처리
-            if (response.getStatusCode() == HttpStatus.TEMPORARY_REDIRECT) {
-                String newUrl = response.getHeaders().getLocation().toString(); // 새로운 URL 가져오기
-                response = restTemplate.exchange(newUrl, HttpMethod.POST, requestEntity, AiServerResponse.class);
-            }
+        // 식물 종류 추가
+        log.debug("target crop: {}", plant);
+        requestBody.put("crop", plant);
 
-            log.info("[resposne status code] = {}", response.getStatusCode());
 
-            AiServerResponse aiServerResponse = response.getBody();
-            GptDiseaseResponse gptDiseaseResponse = chatBotService.generatePrescription(aiServerResponse.getResult());
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
-            Disease disease = Disease.createWith(aiServerResponse, gptDiseaseResponse);
+        HttpEntity<HashMap<String, String>> requestEntity = new HttpEntity<>(requestBody, httpHeaders);
 
-            Member member = memberRepository.findWithDiseasesById(memberId).orElseThrow(MemberNotFoundException::new);
-            member.addDisease(disease);
-            diseaseRepository.save(disease);
+        // 요청 전송
+        RestTemplate restTemplate = new RestTemplate();
+        String fastApiUrl = "http://" + AIEC2ADDRESS +  "/predict"; // "http://<EC2-퍼블릭-IP>/predict"
+        ResponseEntity<AiServerResponse> response = restTemplate.exchange(fastApiUrl, HttpMethod.POST, requestEntity, AiServerResponse.class);
 
-            return ClientDiseaseResponse.createWith(disease);
-        });
+        // 307 리다이렉트 처리
+        if (response.getStatusCode() == HttpStatus.TEMPORARY_REDIRECT) {
+            String newUrl = response.getHeaders().getLocation().toString(); // 새로운 URL 가져오기
+            response = restTemplate.exchange(newUrl, HttpMethod.POST, requestEntity, AiServerResponse.class);
+        }
+
+        log.info("[resposne status code] = {}", response.getStatusCode());
+
+        AiServerResponse aiServerResponse = response.getBody();
+        GptDiseaseResponse gptDiseaseResponse = chatBotService.generatePrescription(aiServerResponse.getResult());
+
+        Disease disease = Disease.createWith(aiServerResponse, gptDiseaseResponse);
+
+        Member member = memberRepository.findWithDiseasesById(memberId).orElseThrow(MemberNotFoundException::new);
+        member.addDisease(disease);
+        diseaseRepository.save(disease);
+
+        return ClientDiseaseResponse.createWith(disease);
 
     }
 
