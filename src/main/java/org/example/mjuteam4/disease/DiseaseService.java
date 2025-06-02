@@ -16,6 +16,8 @@ import org.example.mjuteam4.storage.StorageService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -39,8 +41,10 @@ public class DiseaseService {
 
     // 단일 파일 업로드 한 후 얻은 이미지 URL을 AI 서버에 전송하여 예측값을 가져온다.
     public CompletableFuture<ClientDiseaseResponse> predict(AiServerRequest aiServerRequest, Long memberId) throws IOException {
+        SecurityContext context = SecurityContextHolder.getContext(); // 👈 현재 인증 정보 저장
 
         return CompletableFuture.supplyAsync(() -> {
+            SecurityContextHolder.setContext(context);
             log.debug("disease service thread: " + Thread.currentThread());
             MultipartFile file = aiServerRequest.getFile();
             String description = aiServerRequest.getDescription();
