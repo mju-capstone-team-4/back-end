@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.mjuteam4.mypage.entity.Member;
 import org.example.mjuteam4.mypage.repository.MemberRepository;
 import org.example.mjuteam4.mypage.exception.MemberNotFoundException;
+import org.example.mjuteam4.mypage.security.PrincipalDetails;
 import org.example.mjuteam4.security.provider.TokenProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,10 +29,13 @@ public class JwtUtil {
     public Member getLoginMember(){
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = tokenProvider.extractEmail(authentication);
 
-        log.info(" jwtUtil의 email = {}", email);
-        return memberRepository.findByEmail(email)
-                .orElseThrow(MemberNotFoundException::new);
+        if (authentication != null && authentication.getPrincipal() instanceof PrincipalDetails principal) {
+            String email = principal.getEmail();
+            log.info("email = {}", email);
+            return memberRepository.findByEmail(email)
+                    .orElseThrow(MemberNotFoundException::new);
+        }
+        return null;
     }
 }

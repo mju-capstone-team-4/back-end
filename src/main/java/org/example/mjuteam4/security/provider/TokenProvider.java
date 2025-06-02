@@ -29,10 +29,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.crypto.SecretKey;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
@@ -138,8 +135,9 @@ public class TokenProvider {
         List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role));
 
         // Security의 User 객체 생성
-        User principal = new User(email, "", authorities);
-        return new UsernamePasswordAuthenticationToken(principal, null, authorities);
+        PrincipalDetails principal = new PrincipalDetails(member, Map.of(), "email");
+        return new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());
+
 
     }
 
