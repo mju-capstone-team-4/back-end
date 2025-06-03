@@ -145,11 +145,12 @@ public class ChatService {
         return chatListResDtos;
     }
 
+    @Transactional
     public Long getOrCreatePrivateRoom(Long otherMemberId){
         Member member = jwtUtil.getLoginMember();
-        log.debug("chat member: " + member);
+        log.debug("chat member: " + member.getUsername());
         Member otherMember = memberRepository.findById(otherMemberId).orElseThrow(MemberNotFoundException::new);
-        log.debug("chat other member: " + otherMember);
+        log.debug("chat other member: " + otherMember.getUsername());
         // 나와 상대방이 1:1채팅에 이미 참석하고 있다면 해당 roomId return
         Optional<ChatRoom> chatRoom = chatParticipantRepository.findExistingPrivateRoom(member.getId(), otherMember.getId());
 
