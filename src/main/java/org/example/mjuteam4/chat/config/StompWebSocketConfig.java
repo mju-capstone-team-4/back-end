@@ -35,6 +35,10 @@ public class StompWebSocketConfig implements WebSocketMessageBrokerConfigurer {
                                               WebSocketHandler wsHandler,
                                               Map<String, Object> attributes) {
                 log.debug("handshakeHandler start");
+                //헤더 확인
+                log.debug("handshakeHandler request headers: {}", request.getHeaders());
+                log.debug("handshakeHandler Upgrade header: {}", request.getHeaders().get("Upgrade"));
+                log.debug("handshakeHandler Connection header: {}", request.getHeaders().get("Connection"));
 
                 log.debug("handshakeHandler principal {}", (Principal) attributes.get("principal"));
 
