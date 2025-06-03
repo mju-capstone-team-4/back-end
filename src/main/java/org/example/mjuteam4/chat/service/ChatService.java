@@ -152,21 +152,27 @@ public class ChatService {
         log.debug("chat other member: " + otherMember);
         // 나와 상대방이 1:1채팅에 이미 참석하고 있다면 해당 roomId return
         Optional<ChatRoom> chatRoom = chatParticipantRepository.findExistingPrivateRoom(member.getId(), otherMember.getId());
+
+        log.debug("chatroom present? {}", chatRoom.isPresent());
         if(chatRoom.isPresent()){
+            log.debug("found char room id {}", chatRoom.get().getId());
             return chatRoom.get().getId();
         }
 
+        log.debug("chatroom create");
         // 만약에 1:1채팅방이 없을경우 기존 채팅방 개설
         ChatRoom newRoom = ChatRoom.builder()
                 .isGroupChat("N")
                 .name(member.getUsername() + "-" + otherMember.getUsername())
                 .build();
+        log.debug("new chat room: {}", newRoom.getId());
         chatRoomRepository.save(newRoom);
 
         // 두사람 모두 참여자로 새롭게 추가
         addParticipantToRoom(newRoom, member);
         addParticipantToRoom(newRoom, otherMember);
 
+        log.debug("return new chat room: {}", newRoom.getId());
         return newRoom.getId();
     }
 
