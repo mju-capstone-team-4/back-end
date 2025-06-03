@@ -26,6 +26,7 @@ public class StompWebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private final StompHandler stompHandler;
     private final AuthHandshakeInterceptor authHandshakeInterceptor;
 
+    /*
     @Bean
     public HandshakeHandler handshakeHandler() {
         return new DefaultHandshakeHandler() {
@@ -41,15 +42,14 @@ public class StompWebSocketConfig implements WebSocketMessageBrokerConfigurer {
             }
         };
     }
-
-
+    */
     // 웹소켓 연결을 위한 엔드포인트 /connect 등록
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/connect")
                 .setAllowedOrigins("*")
-                .addInterceptors(authHandshakeInterceptor) // 인증
-                .setHandshakeHandler(handshakeHandler());
+                .addInterceptors(authHandshakeInterceptor); // 인증
+                //.setHandshakeHandler(handshakeHandler());
     }
 
     // STOMP 메시지 전송 경로(/publish) 및 구독 경로(/topic) 설정
