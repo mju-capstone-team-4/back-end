@@ -29,6 +29,7 @@ public class StompWebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Bean
     public HandshakeHandler handshakeHandler() {
+        log.debug("=== determineUser() 호출됨 ===");
         return new DefaultHandshakeHandler() {
             @Override
             protected Principal determineUser(ServerHttpRequest request,
