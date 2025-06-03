@@ -156,6 +156,8 @@ public class ChatService {
         log.debug("chatroom present? {}", chatRoom.isPresent());
         if(chatRoom.isPresent()){
             log.debug("found char room id {}", chatRoom.get().getId());
+            log.debug("member1: ", chatRoom.get().getChatParticipants().get(0));
+            log.debug("member2: ", chatRoom.get().getChatParticipants().get(1));
             return chatRoom.get().getId();
         }
 

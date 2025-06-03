@@ -24,6 +24,8 @@ public class AuthHandshakeInterceptor implements HandshakeInterceptor {
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response,
                                    WebSocketHandler wsHandler,
                                    Map<String, Object> attributes) throws Exception {
+        log.debug("Headers check: {}", request.getHeaders());
+
         log.debug("AuthHandshakeInterceptor Start");
         if (request instanceof ServletServerHttpRequest servletRequest) {
             HttpServletRequest req = servletRequest.getServletRequest();
@@ -37,6 +39,8 @@ public class AuthHandshakeInterceptor implements HandshakeInterceptor {
                 return true;
             }
         }
+        log.debug("Headers check before return: {}", request.getHeaders());
+
         return false;
     }
 
