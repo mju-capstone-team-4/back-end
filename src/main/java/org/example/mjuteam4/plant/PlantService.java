@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.web.util.UriUtils;
 
@@ -136,10 +137,6 @@ public class PlantService {
 
             JSONObject item = (JSONObject) itemRaw;
 
-            // DB에서 imageUrl 조회
-            Optional<Plant> plantOpt = plantRepository.findByPlantPilbkNo(reqPlantPilbkNo);
-            plantOpt.ifPresent(plant -> item.put("imageUrl", plant.getImgUrl()));
-
             return json.toString();
 
         } catch (Exception e) {
@@ -194,32 +191,36 @@ public class PlantService {
 
     @Transactional
     public void fetchAndSaveAllPlants() {
-        int page = 6;
+        int page = 0;
         int processed = 0;
-
         List<Future<?>> futures = new ArrayList<>();
 
-        while (true) { // ✅ 조건을 while (true)로 수정
+        WebClient webClient = WebClient.builder()
+                .baseUrl("https://apis.data.go.kr")
+                .defaultHeader(HttpHeaders.USER_AGENT, "Mozilla/5.0")
+                .build();
+
+        while (true) {
             try {
-                String baseUrl = "http://openapi.nature.go.kr/openapi/service/rest/PlantService/plntIlstrSearch";
-                String uri = UriComponentsBuilder.fromHttpUrl(baseUrl)
-                        .queryParam("serviceKey", serviceKey)
-                        .queryParam("st", "1")
-                        .queryParam("sw", "")
-                        .queryParam("dateGbn", "")
-                        .queryParam("dateFrom", "")
-                        .queryParam("dateTo", "")
-                        .queryParam("numOfRows", "100")
+                String uri = UriComponentsBuilder.fromPath("/1400119/PlantResource/plantPilbkSearch")
+                        .queryParam("serviceKey", "%2BQiEewXiCtFc2wzKcuiF5ZXfhmMWDsF4qhJooQgwm7qUCNBAnmSk0RnbjcxocBrLmuEvHTpyjggBzSiYERlvFw%3D%3D")
+                        .queryParam("reqSearchWrd", "")
                         .queryParam("pageNo", page)
+                        .queryParam("numOfRows", "20")
                         .build(false)
                         .toUriString();
 
-                ResponseEntity<String> response = restTemplate.getForEntity(uri, String.class);
-                JSONObject json = new JSONObject(response.getBody());
+                String responseStr = webClient.get()
+                        .uri(uri)
+                        .retrieve()
+                        .bodyToMono(String.class)
+                        .block();
+
+                JSONObject json = new JSONObject(responseStr);
                 JSONObject body = json.getJSONObject("response").getJSONObject("body");
 
-                int totalPages = (int) Math.ceil(body.getInt("totalCount") / 100.0); // ✅ 응답 후에 계산
-                if (page > totalPages) break; // ✅ 마지막 페이지 넘으면 종료
+                int totalPages = (int) Math.ceil(body.getInt("totalCount") / 100.0);
+                if (page > totalPages) break;
 
                 Object items = body.optJSONObject("items").opt("item");
 
@@ -229,8 +230,7 @@ public class PlantService {
                 } else if (items instanceof JSONArray itemArray) {
                     for (int i = 0; i < itemArray.length(); i++) {
                         JSONObject item = itemArray.getJSONObject(i);
-                        String detailYn = item.optString("detailYn");
-                        if (!"Y".equals(detailYn)) continue;
+                        if (!"Y".equals(item.optString("detailYn"))) continue;
 
                         submitDetailTask(item.optString("plantPilbkNo"), futures);
                         processed++;
@@ -246,10 +246,10 @@ public class PlantService {
             }
         }
 
-        // 병렬 작업 완료 대기
+        // 병렬 저장 작업 완료 대기
         for (Future<?> future : futures) {
             try {
-                future.get(); // 예외 전파
+                future.get();
             } catch (Exception e) {
                 log.error("❌ 병렬 저장 실패", e);
             }
@@ -257,6 +257,7 @@ public class PlantService {
 
         executor.shutdown();
     }
+
 
 
 
