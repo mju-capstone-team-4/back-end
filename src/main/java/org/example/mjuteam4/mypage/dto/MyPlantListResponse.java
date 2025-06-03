@@ -21,7 +21,7 @@ public class MyPlantListResponse {
                 .myPlantId(myPlant.getId())
                 .name(myPlant.getName())
                 .description(myPlant.getDescription())
-                .sampleImageUrl(myPlant.getSampleImageUrl())
+                .sampleImageUrl(myPlant.getImageUrl())
                 .build();
     }
 }
