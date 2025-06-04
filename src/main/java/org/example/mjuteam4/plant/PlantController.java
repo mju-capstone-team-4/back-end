@@ -3,6 +3,7 @@ package org.example.mjuteam4.plant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.mjuteam4.plant.dto.PlantCollectionResponse;
+import org.example.mjuteam4.plant.dto.RegisterPlantReq;
 import org.example.mjuteam4.plant.dto.SearchPlantByImageRequest;
 import org.example.mjuteam4.plant.dto.SearchPlantByImageResponse;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,6 +26,12 @@ public class PlantController {
     ) {
         log.info("search 들어옴");
         return ResponseEntity.ok().body(plantService.search(keyword, page));
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<String> register(@RequestBody RegisterPlantReq registerPlant){
+        plantService.register(registerPlant);
+        return ResponseEntity.ok().body("success");
     }
 
     @GetMapping("/search/{q1}")

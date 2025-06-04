@@ -3,6 +3,7 @@ package org.example.mjuteam4.plant;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.mjuteam4.plant.dto.RegisterPlantReq;
 import org.example.mjuteam4.plant.dto.SearchPlantByImageRequest;
 import org.example.mjuteam4.plant.dto.SearchPlantByImageResponse;
 import org.json.JSONArray;
@@ -359,4 +360,28 @@ public class PlantService {
             throw new RuntimeException("OpenAI 응답 파싱 실패", e);
         }
     }
+
+    public void register(RegisterPlantReq registerPlant) {
+        Plant plant = Plant.builder()
+                .description(registerPlant.getDescription())
+                .familyKorNm(registerPlant.getFamilyKorNm())
+                .genusKorNm(registerPlant.getGenusKorNm())
+                .imgUrl(registerPlant.getImgUrl())
+                .plantGnrlNm(registerPlant.getPlantGnrlNm())
+                .plantPilbkNo(registerPlant.getPlantPilbkNo())
+                .plantSpecsScnm(registerPlant.getPlantSpecsScnm())
+                .dstrb(registerPlant.getDstrb())
+                .flwrDesc(registerPlant.getFlwrDesc())
+                .fritDesc(registerPlant.getFritDesc())
+                .grwEvrntDesc(registerPlant.getGrwEvrntDesc())
+                .leafDesc(registerPlant.getLeafDesc())
+                .shpe(registerPlant.getShpe())
+                .sz(registerPlant.getSz())
+                .useMthdDesc(registerPlant.getUseMthdDesc())
+                .build();
+
+        // 예: 저장
+        plantRepository.save(plant);
+    }
+
 }
